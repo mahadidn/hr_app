@@ -1,0 +1,26 @@
+{
+  "name": "Laravel 8 + PHP 7.4 + PostgreSQL HR app",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/var/www/html",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "onecentlin.laravel-blade",
+        "amiralizadeh9480.laravel-extra-intellisense",
+        "ryannaddy.laravel-artisan",
+        "humao.rest-client",
+        "cweijan.vscode-postgresql-client2"
+      ],
+      "settings": {
+        "php.validate.executablePath": "/usr/local/bin/php",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+      }
+    }
+  },
+  "postCreateCommand": "composer create-project laravel/laravel:^8.0 /tmp/laravel && shopt -s dotglob && mv /tmp/laravel/* . && rmdir /tmp/laravel && cp .env.example .env && php artisan key:generate",
+  "remoteUser": "vscode"
+}
