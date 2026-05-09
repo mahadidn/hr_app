@@ -25,6 +25,21 @@ Route::get('/login', function () {
 
 // Dashboard Page
 Route::get('/dashboard', function () {
-
     return view('dashboard');
 })->name('dashboard');
+
+// Employee Page
+Route::get('/employees', function () {
+    return view('employees.index');
+})->name('employees');
+
+
+// Department Page
+Route::get('/departments', function () {
+    return view('departments.index');
+})->name('departments');
+
+// attendance page
+Route::get('/attendance', function () {
+    return view('attendance.index');
+})->name('attendance');

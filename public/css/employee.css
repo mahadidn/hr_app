@@ -1,0 +1,183 @@
+/* ============================================================
+       KHUSUS HALAMAN EMPLOYEE
+    ============================================================ */
+.table-enterprise {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+.table-enterprise thead th {
+    background-color: var(--bg-hover);
+    color: var(--text-muted);
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-color);
+    border-top: none;
+}
+
+.table-enterprise tbody td {
+    padding: 16px;
+    font-size: 13.5px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--divider);
+    vertical-align: middle;
+    transition: background-color 0.2s;
+}
+
+.table-enterprise tbody tr:hover td {
+    background-color: var(--bg-active);
+}
+
+.table-enterprise tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.avatar-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-soft), var(--bg-hover));
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+}
+
+.badge-dept {
+    background-color: var(--bg-hover);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+/* Filter Area */
+.filter-wrapper {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 24px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+/* Action Buttons */
+.btn-action {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.btn-action-view {
+    color: var(--accent);
+    background-color: var(--accent-soft);
+    border: 1px solid transparent;
+}
+
+.btn-action-view:hover {
+    background-color: var(--accent);
+    color: #fff;
+}
+
+.btn-action-edit {
+    color: var(--warning);
+    background-color: rgba(245, 158, 11, 0.1);
+    border: 1px solid transparent;
+}
+
+.btn-action-edit:hover {
+    background-color: var(--warning);
+    color: #fff;
+}
+
+.btn-action-delete {
+    color: var(--danger);
+    background-color: rgba(240, 82, 82, 0.1);
+    border: 1px solid transparent;
+}
+
+.btn-action-delete:hover {
+    background-color: var(--danger);
+    color: #fff;
+}
+
+.search-input-wrap {
+    position: relative;
+}
+
+.search-input-wrap i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.search-input-wrap input {
+    padding-left: 38px;
+}
+
+/* ============================================================
+       MODAL ENTERPRISE STYLING
+    ============================================================ */
+.enterprise-modal .modal-content {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+.enterprise-modal .modal-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 24px;
+}
+
+.enterprise-modal .modal-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 16px 24px;
+    background-color: var(--bg-hover);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.enterprise-modal .modal-title {
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.enterprise-modal .btn-close {
+    filter: var(--bs-btn-close-color);
+}
+
+[data-theme="dark"] .enterprise-modal .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* View Modal Specifics */
+.view-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.view-value {
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 16px;
+}
