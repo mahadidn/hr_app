@@ -51,14 +51,9 @@
                 <span class="filter-label"><i class="fa-solid fa-building me-1"></i> Filter by Department</span>
                 <select class="emp-form-select" id="filterDept">
                     <option value="">All Departments</option>
-                    <option value="engineering">Engineering</option>
-                    <option value="finance">Finance</option>
-                    <option value="hr">Human Resources</option>
-                    <option value="it">IT Infrastructure</option>
-                    <option value="marketing">Marketing</option>
-                    <option value="operations">Operations</option>
-                    <option value="legal">Legal</option>
-                    <option value="sales">Sales</option>
+                    @foreach ($departments as $index => $dept)
+                        <option value="{{$dept->name}}">{{$dept->Dept_name}}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -122,81 +117,80 @@
                     </tr>
                 </thead>
                 <tbody id="empTbody">
-
-                    @php
-                        $employees = [
-                            ['id'=>1, 'nik'=>'1001-ENG-2019', 'name'=>'Ahmad Wijaya',       'dept'=>'Engineering',     'dept_color'=>'#4f6ef7', 'desig'=>'Senior Backend Engineer',  'gender'=>'Male',   'initials'=>'AW', 'grad'=>'linear-gradient(135deg,#4f6ef7,#7c3aed)', 'phone'=>'+62 812-0001-0001', 'join'=>'2019-03-15', 'join_end'=>'', 'birth_place'=>'Jakarta', 'birth_date'=>'1992-05-20'],
-                            ['id'=>2, 'nik'=>'1045-HRD-2020', 'name'=>'Sari Rahayu',        'dept'=>'Human Resources', 'dept_color'=>'#f59e0b', 'desig'=>'HR Specialist',             'gender'=>'Female', 'initials'=>'SR', 'grad'=>'linear-gradient(135deg,#f59e0b,#ef4444)', 'phone'=>'+62 813-0002-0002', 'join'=>'2020-07-01', 'join_end'=>'', 'birth_place'=>'Bandung',  'birth_date'=>'1995-11-10'],
-                            ['id'=>3, 'nik'=>'1012-FIN-2018', 'name'=>'Budi Prasetyo',      'dept'=>'Finance',         'dept_color'=>'#0ea66e', 'desig'=>'Finance Manager',           'gender'=>'Male',   'initials'=>'BP', 'grad'=>'linear-gradient(135deg,#0ea66e,#0284c7)', 'phone'=>'+62 811-0003-0003', 'join'=>'2018-01-10', 'join_end'=>'', 'birth_place'=>'Surabaya', 'birth_date'=>'1988-03-25'],
-                            ['id'=>4, 'nik'=>'1088-MKT-2021', 'name'=>'Dewi Nuraini',       'dept'=>'Marketing',       'dept_color'=>'#db2777', 'desig'=>'Digital Marketing Lead',    'gender'=>'Female', 'initials'=>'DN', 'grad'=>'linear-gradient(135deg,#7c3aed,#db2777)', 'phone'=>'+62 857-0004-0004', 'join'=>'2021-02-20', 'join_end'=>'', 'birth_place'=>'Semarang', 'birth_date'=>'1997-08-14'],
-                            ['id'=>5, 'nik'=>'1031-ITS-2019', 'name'=>'Reza Firmansyah',    'dept'=>'IT Infrastructure','dept_color'=>'#0284c7','desig'=>'Network Engineer',          'gender'=>'Male',   'initials'=>'RF', 'grad'=>'linear-gradient(135deg,#0284c7,#0ea66e)', 'phone'=>'+62 878-0005-0005', 'join'=>'2019-08-05', 'join_end'=>'', 'birth_place'=>'Yogyakarta','birth_date'=>'1994-12-01'],
-                            ['id'=>6, 'nik'=>'1060-LGL-2022', 'name'=>'Ninda Kusumawati',   'dept'=>'Legal',           'dept_color'=>'#7c3aed', 'desig'=>'Legal Counsel',             'gender'=>'Female', 'initials'=>'NK', 'grad'=>'linear-gradient(135deg,#7c3aed,#4f6ef7)', 'phone'=>'+62 896-0006-0006', 'join'=>'2022-04-11', 'join_end'=>'', 'birth_place'=>'Malang',   'birth_date'=>'1993-06-30'],
-                            ['id'=>7, 'nik'=>'1075-SLS-2020', 'name'=>'Hari Santoso',        'dept'=>'Sales',           'dept_color'=>'#ef4444', 'desig'=>'Sales Executive',           'gender'=>'Male',   'initials'=>'HS', 'grad'=>'linear-gradient(135deg,#ef4444,#f59e0b)', 'phone'=>'+62 821-0007-0007', 'join'=>'2020-09-15', 'join_end'=>'', 'birth_place'=>'Bekasi',   'birth_date'=>'1991-01-17'],
-                        ];
-                    @endphp
-
-                    @foreach($employees as $emp)
-                    <tr data-id="{{ $emp['id'] }}"
-                        data-nik="{{ $emp['nik'] }}"
-                        data-name="{{ $emp['name'] }}"
-                        data-dept="{{ $emp['dept'] }}"
-                        data-desig="{{ $emp['desig'] }}"
-                        data-gender="{{ $emp['gender'] }}"
-                        data-phone="{{ $emp['phone'] }}"
-                        data-join="{{ $emp['join'] }}"
-                        data-join-end="{{ $emp['join_end'] }}"
-                        data-birth-place="{{ $emp['birth_place'] }}"
-                        data-birth-date="{{ $emp['birth_date'] }}"
-                        data-grad="{{ $emp['grad'] }}"
-                        data-initials="{{ $emp['initials'] }}"
-                        data-dept-color="{{ $emp['dept_color'] }}">
-                        <td style="padding-left:20px;">
-                            <input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;">
-                        </td>
-                        <td><span class="nik-badge">{{ $emp['nik'] }}</span></td>
-                        <td>
-                            <div class="emp-cell">
-                                <div class="emp-avatar" style="background:{{ $emp['grad'] }};">{{ $emp['initials'] }}</div>
-                                <div>
-                                    <div class="emp-name">{{ $emp['name'] }}</div>
-                                    <div class="emp-email">{{ strtolower(str_replace(' ', '.', $emp['name'])) }}@nexahr.id</div>
+                    @forelse($employees as $emp)
+                        @php
+                            // Buat inisial (Contoh: Ahmad Wijaya -> AW)
+                            $words = explode(' ', $emp->Full_name);
+                            $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+                            
+                            // Generate warna gradien unik berdasarkan ID untuk Avatar
+                            $grad = 'linear-gradient(135deg, #4f6ef7, #7c3aed)'; 
+                        @endphp
+                        
+                        <tr data-id="{{ $emp->id }}"
+                            data-nik="{{ $emp->NIK }}"
+                            data-name="{{ $emp->Full_name }}"
+                            data-dept="{{ $emp->Dept_id }}" {{-- Value department_id untuk select edit --}}
+                            data-desig="{{ $emp->Designation }}"
+                            data-gender="{{ $emp->Gender }}"
+                            data-phone="{{ $emp->Phone_no }}"
+                            data-join="{{ $emp->Join_date }}"
+                            data-join-end="{{ $emp->Join_end }}"
+                            data-birth-place="{{ $emp->Birth_place }}"
+                            data-birth-date="{{ $emp->Birth_date }}"
+                            data-grad="{{ $grad }}"
+                            data-initials="{{ $initials }}"
+                            data-dept-color="#4f6ef7">
+                            
+                            <td style="padding-left:20px;">
+                                <input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;">
+                            </td>
+                            <td><span class="nik-badge">{{ $emp->NIK }}</span></td>
+                            <td>
+                                <div class="emp-cell">
+                                    <div class="emp-avatar" style="background:{{ $grad }};">{{ $initials }}</div>
+                                    <div>
+                                        <div class="emp-name">{{ $emp->Full_name }}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="dept-badge">
-                                <span class="dept-dot" style="background:{{ $emp['dept_color'] }};"></span>
-                                {{ $emp['dept'] }}
-                            </span>
-                        </td>
-                        <td><span class="desig-text">{{ $emp['desig'] }}</span></td>
-                        <td style="text-align:center;">
-                            <div class="action-group" style="justify-content:center;">
-                                <button class="btn-act btn-act-view"
-                                        title="View Detail"
-                                        data-action="view"
-                                        data-row-id="{{ $emp['id'] }}">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                                <button class="btn-act btn-act-edit"
-                                        title="Edit Employee"
-                                        data-action="edit"
-                                        data-row-id="{{ $emp['id'] }}">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button class="btn-act btn-act-del"
-                                        title="Delete Employee"
-                                        data-action="delete"
-                                        data-row-id="{{ $emp['id'] }}"
-                                        data-name="{{ $emp['name'] }}"
-                                        data-nik="{{ $emp['nik'] }}">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-
+                            </td>
+                            <td>
+                                <span class="dept-badge">
+                                    <span class="dept-dot" style="background:#4f6ef7;"></span>
+                                    {{ $emp->department->Dept_name ?? 'N/A' }} {{-- Panggil relasi dari Controller --}}
+                                </span>
+                            </td>
+                            <td><span class="desig-text">{{ $emp->Designation }}</span></td>
+                            <td style="text-align:center;">
+                                <div class="action-group" style="justify-content:center;">
+                                    <button class="btn-act btn-act-view"
+                                            title="View Detail"
+                                            data-action="view"
+                                            data-row-id="{{ $emp->id }}">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <button class="btn-act btn-act-edit"
+                                            title="Edit Employee"
+                                            data-action="edit"
+                                            data-row-id="{{ $emp->id }}">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="btn-act btn-act-del"
+                                            title="Delete Employee"
+                                            data-action="delete"
+                                            data-row-id="{{ $emp->id }}"
+                                            data-name="{{ $emp->Full_name }}"
+                                            data-nik="{{ $emp->NIK }}">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">Belum ada data karyawan.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -240,7 +234,7 @@
                 </div>
 
                 <div class="modal-body">
-                    <form id="formAddEmployee" novalidate>
+                    <form action="{{ url('/employees') }}" method="POST" id="formAddEmployee" novalidate>
                         @csrf
 
                         {{-- Section 1: Identity --}}
@@ -251,12 +245,12 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="f-label">NIK <span class="req">*</span></label>
-                                <input type="text" class="f-input" name="nik" id="addNik"
+                                <input type="text" class="f-input" name="NIK" id="addNik"
                                        maxlength="13" placeholder="Contoh: 1001-ENG-2024" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="f-label">Full Name <span class="req">*</span></label>
-                                <input type="text" class="f-input" name="full_name" id="addFullName"
+                                <input type="text" class="f-input" name="Full_name" id="addFullName"
                                        maxlength="50" placeholder="Nama lengkap karyawan" required>
                             </div>
                         </div>
@@ -279,12 +273,12 @@
                                             {{-- Rendered by JS --}}
                                         </div>
                                     </div>
-                                    <input type="hidden" name="department_name" id="addDeptHidden" required>
+                                    <input type="hidden" name="Dept_id" id="addDeptHidden" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="f-label">Designation <span class="req">*</span></label>
-                                <input type="text" class="f-input" name="designation" id="addDesignation"
+                                <input type="text" class="f-input" name="Designation" id="addDesignation"
                                        maxlength="50" placeholder="Jabatan / posisi" required>
                             </div>
                         </div>
@@ -292,7 +286,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="f-label">Gender <span class="req">*</span></label>
-                                <select class="f-select" name="gender" id="addGender" required>
+                                <select class="f-select" name="Gender" id="addGender" required>
                                     <option value="" disabled selected>Pilih gender…</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
@@ -300,7 +294,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="f-label">Phone No</label>
-                                <input type="text" class="f-input" name="phone_no" id="addPhone"
+                                <input type="text" class="f-input" name="Phone_no" id="addPhone"
                                        maxlength="13" placeholder="+62 8xx-xxxx-xxxx">
                             </div>
                         </div>
@@ -313,12 +307,12 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="f-label">Birth Place <span class="req">*</span></label>
-                                <input type="text" class="f-input" name="birth_place" id="addBirthPlace"
+                                <input type="text" class="f-input" name="Birth_place" id="addBirthPlace"
                                        maxlength="50" placeholder="Kota kelahiran" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="f-label">Birth Date <span class="req">*</span></label>
-                                <input type="date" class="f-input" name="birth_date" id="addBirthDate" required>
+                                <input type="date" class="f-input" name="Birth_date" id="addBirthDate" required>
                             </div>
                         </div>
 
@@ -330,13 +324,13 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="f-label">Join Date <span class="req">*</span></label>
-                                <input type="date" class="f-input" name="join_date" id="addJoinDate" required>
+                                <input type="date" class="f-input" name="Join_date" id="addJoinDate" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="f-label">Join End
                                     <span style="color:var(--text-muted);font-weight:400;">(opsional)</span>
                                 </label>
-                                <input type="date" class="f-input" name="join_end" id="addJoinEnd">
+                                <input type="date" class="f-input" name="Join_end" id="addJoinEnd">
                             </div>
                         </div>
 
@@ -392,11 +386,11 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="f-label">NIK <span class="req">*</span></label>
-                                <input type="text" class="f-input" name="nik" id="editNik" maxlength="13" required>
+                                <input type="text" class="f-input" name="NIK" id="editNik" maxlength="13" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="f-label">Full Name <span class="req">*</span></label>
-                                <input type="text" class="f-input" name="full_name" id="editFullName" maxlength="50" required>
+                                <input type="text" class="f-input" name="Full_name" id="editFullName" maxlength="50" required>
                             </div>
                         </div>
 
@@ -415,19 +409,19 @@
                                         </div>
                                         <div class="dept-option-list" id="editDeptList"></div>
                                     </div>
-                                    <input type="hidden" name="department_name" id="editDeptHidden" required>
+                                    <input type="hidden" name="Dept_id" id="editDeptHidden" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="f-label">Designation <span class="req">*</span></label>
-                                <input type="text" class="f-input" name="designation" id="editDesignation" maxlength="50" required>
+                                <input type="text" class="f-input" name="Designation" id="editDesignation" maxlength="50" required>
                             </div>
                         </div>
 
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="f-label">Gender <span class="req">*</span></label>
-                                <select class="f-select" name="gender" id="editGender" required>
+                                <select class="f-select" name="Gender" id="editGender" required>
                                     <option value="" disabled>Pilih gender…</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
@@ -435,7 +429,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="f-label">Phone No</label>
-                                <input type="text" class="f-input" name="phone_no" id="editPhone" maxlength="13">
+                                <input type="text" class="f-input" name="Phone_no" id="editPhone" maxlength="13">
                             </div>
                         </div>
 
@@ -444,11 +438,11 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="f-label">Birth Place <span class="req">*</span></label>
-                                <input type="text" class="f-input" name="birth_place" id="editBirthPlace" maxlength="50" required>
+                                <input type="text" class="f-input" name="Birth_place" id="editBirthPlace" maxlength="50" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="f-label">Birth Date <span class="req">*</span></label>
-                                <input type="date" class="f-input" name="birth_date" id="editBirthDate" required>
+                                <input type="date" class="f-input" name="Birth_date" id="editBirthDate" required>
                             </div>
                         </div>
 
@@ -457,11 +451,11 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="f-label">Join Date <span class="req">*</span></label>
-                                <input type="date" class="f-input" name="join_date" id="editJoinDate" required>
+                                <input type="date" class="f-input" name="Join_date" id="editJoinDate" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="f-label">Join End</label>
-                                <input type="date" class="f-input" name="join_end" id="editJoinEnd">
+                                <input type="date" class="f-input" name="Join_end" id="editJoinEnd">
                             </div>
                         </div>
 
@@ -582,19 +576,19 @@ $(function () {
 
     /* ================================================================
        DEPARTMENT DATA
-       Ganti dengan data dari controller/AJAX di produksi.
     ================================================================ */
+    @php
+        // Palet warna departemen (opsional)
+        $deptColors = ['#4f6ef7','#0ea66e','#f59e0b','#0284c7','#7c3aed','#db2777','#64748b','#ef4444','#8b5cf6','#06b6d4'];
+    @endphp
     var departments = [
-        { value: 'Engineering',      label: 'Engineering',      color: '#4f6ef7' },
-        { value: 'Finance',          label: 'Finance',          color: '#0ea66e' },
-        { value: 'Human Resources',  label: 'Human Resources',  color: '#f59e0b' },
-        { value: 'IT Infrastructure',label: 'IT Infrastructure',color: '#0284c7' },
-        { value: 'Legal',            label: 'Legal',            color: '#7c3aed' },
-        { value: 'Marketing',        label: 'Marketing',        color: '#db2777' },
-        { value: 'Operations',       label: 'Operations',       color: '#64748b' },
-        { value: 'Sales',            label: 'Sales',            color: '#ef4444' },
-        { value: 'Product',          label: 'Product',          color: '#8b5cf6' },
-        { value: 'Research & Dev',   label: 'Research & Dev',   color: '#06b6d4' },
+        @foreach($departments as $index => $dept)
+            { 
+                value: '{{ $dept->id }}', 
+                label: '{{ $dept->Dept_name }}', 
+                color: '{{ $deptColors[$index % count($deptColors)] }}' 
+            },
+        @endforeach
     ];
 
 
@@ -888,6 +882,7 @@ $(function () {
        SAVE NEW EMPLOYEE
     ================================================================ */
     $('#btnSaveEmployee').on('click', function() {
+        // 1. Validasi Front-end
         if (!validateForm('#formAddEmployee', '#addDeptHidden')) {
             Swal.fire({
                 icon: 'warning',
@@ -898,6 +893,7 @@ $(function () {
             return;
         }
 
+        // 2. Munculkan Loading
         Swal.fire({
             title: 'Menyimpan Data…',
             html: 'Sedang menyimpan data karyawan baru.',
@@ -905,31 +901,47 @@ $(function () {
             didOpen: function() { Swal.showLoading(); }
         });
 
-        @php
-        /*
-         * Ganti setTimeout dengan AJAX POST ke route Anda:
-         * $.ajax({
-         *     url: '{{ route("employees.store") }}',
-         *     method: 'POST',
-         *     data: $('#formAddEmployee').serialize(),
-         *     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-         *     success: ..., error: ...
-         * });
-         */ 
-        @endphp
-        setTimeout(function() {
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil Ditambahkan!',
-                html: 'Karyawan <strong>' + $('#addFullName').val() + '</strong> berhasil disimpan.',
-                confirmButtonColor: '#4f6ef7',
-                confirmButtonText: 'OK'
-            }).then(function() {
-                bootstrap.Modal.getInstance(document.getElementById('modalAddEmployee')).hide();
-                $('#formAddEmployee')[0].reset();
-                addDeptDD.reset();
-            });
-        }, 1500);
+        // 3. Kirim Data via AJAX
+        $.ajax({
+            url: $('#formAddEmployee').attr('action'), // Otomatis mengambil action dari tag <form>
+            method: 'POST',
+            data: $('#formAddEmployee').serialize(), // Otomatis membungkus semua input form
+            success: function(response) {
+                // Jika berhasil disimpan di database
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil Ditambahkan!',
+                    html: 'Karyawan <strong>' + $('#addFullName').val() + '</strong> berhasil disimpan.',
+                    confirmButtonColor: '#4f6ef7',
+                    confirmButtonText: 'OK'
+                }).then(function() {
+                    // Tutup Modal & Reset Form
+                    bootstrap.Modal.getInstance(document.getElementById('modalAddEmployee')).hide();
+                    $('#formAddEmployee')[0].reset();
+                    addDeptDD.reset();
+                    
+                    // Refresh halaman untuk melihat data terbaru di tabel
+                    window.location.reload(); 
+                });
+            },
+            error: function(xhr) {
+                // Jika gagal (misal NIK sudah terdaftar, terdeteksi oleh validasi Laravel)
+                var errorMsg = 'Terjadi kesalahan saat menyimpan data.';
+                
+                // Tangkap pesan error detail dari Laravel
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    // Ambil pesan error validasi pertama
+                    errorMsg = Object.values(xhr.responseJSON.errors)[0][0]; 
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Menyimpan',
+                    text: errorMsg,
+                    confirmButtonColor: '#f05252'
+                });
+            }
+        });
     });
 
     // Reset form when Add modal closes
@@ -945,6 +957,7 @@ $(function () {
        UPDATE EMPLOYEE
     ================================================================ */
     $('#btnUpdateEmployee').on('click', function() {
+        // 1. Validasi Front-end
         if (!validateForm('#formEditEmployee', '#editDeptHidden')) {
             Swal.fire({
                 icon: 'warning',
@@ -955,6 +968,11 @@ $(function () {
             return;
         }
 
+        // 2. Ambil ID Karyawan untuk menyusun URL dinamis
+        var empId = $('#editEmpId').val();
+        var targetUrl = '{{ url("/employees") }}/' + empId;
+
+        // 3. Munculkan Loading
         Swal.fire({
             title: 'Memperbarui Data…',
             html: 'Sedang menyimpan perubahan.',
@@ -962,24 +980,49 @@ $(function () {
             didOpen: function() { Swal.showLoading(); }
         });
 
-        /*
-         * AJAX PUT ke: {{ url('/employees') }}/<id>
-         */
-        setTimeout(function() {
-            Swal.fire({
-                icon: 'success',
-                title: 'Data Diperbarui!',
-                html: 'Karyawan <strong>' + $('#editFullName').val() + '</strong> berhasil diupdate.',
-                confirmButtonColor: '#4f6ef7'
-            }).then(function() {
-                bootstrap.Modal.getInstance(document.getElementById('modalEditEmployee')).hide();
-            });
-        }, 1400);
+        // 4. Kirim request AJAX
+        $.ajax({
+            url: targetUrl,
+            method: 'POST', // Tetap gunakan POST karena @method('PUT') otomatis terselip di .serialize()
+            data: $('#formEditEmployee').serialize(),
+            success: function(response) {
+                // Jika berhasil
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Data Diperbarui!',
+                    html: 'Karyawan <strong>' + $('#editFullName').val() + '</strong> berhasil diupdate.',
+                    confirmButtonColor: '#4f6ef7'
+                }).then(function() {
+                    // Tutup modal dan refresh halaman
+                    bootstrap.Modal.getInstance(document.getElementById('modalEditEmployee')).hide();
+                    window.location.reload(); 
+                });
+            },
+            error: function(xhr) {
+                // Jika gagal (misalnya NIK diubah tapi bentrok dengan NIK orang lain)
+                var errorMsg = 'Terjadi kesalahan saat memperbarui data.';
+                
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    // Mengambil pesan error pertama dari Laravel Validator
+                    errorMsg = Object.values(xhr.responseJSON.errors)[0][0]; 
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Memperbarui',
+                    text: errorMsg,
+                    confirmButtonColor: '#f05252'
+                });
+            }
+        });
     });
 
 
     /* ================================================================
        DELETE — SweetAlert2 konfirmasi dua tahap
+    ================================================================ */
+    /* ================================================================
+   DELETE — SweetAlert2 konfirmasi dua tahap dengan AJAX
     ================================================================ */
     $(document).on('click', '[data-action="delete"]', function() {
         var $btn = $(this);
@@ -1007,7 +1050,7 @@ $(function () {
         }).then(function(result) {
             if (!result.isConfirmed) return;
 
-            // Step 2 — Loading & simulasi request
+            // Step 2 — Loading indicator
             Swal.fire({
                 title: 'Menghapus Data…',
                 html: 'Sedang memproses penghapusan <strong>' + name + '</strong>.',
@@ -1016,36 +1059,50 @@ $(function () {
                 didOpen: function() { Swal.showLoading(); }
             });
 
-            /*
-             * AJAX DELETE ke: {{ url('/employees') }}/<id>
-             *
-             * $.ajax({
-             *     url: '{{ url("/employees") }}/' + id,
-             *     method: 'DELETE',
-             *     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-             *     success: function() { ... },
-             *     error: function() { ... }
-             * });
-             */
-            setTimeout(function() {
-                // Hapus row dari tabel (demo)
-                var $row = $('[data-action="delete"][data-row-id="' + id + '"]').closest('tr');
+            // Step 3 — AJAX Request ke Backend Laravel
+            $.ajax({
+                url: '{{ url("/employees") }}/' + id, // Menuju rute destroy di controller
+                type: 'DELETE',
+                headers: {
+                    // Mengambil token dari tag meta di head HTML
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    // Ambil elemen baris (TR) yang akan dihapus
+                    var $row = $('[data-action="delete"][data-row-id="' + id + '"]').closest('tr');
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil Dihapus',
-                    html: 'Data karyawan <strong>' + name + '</strong> telah dihapus dari sistem.',
-                    confirmButtonColor: '#4f6ef7',
-                    timer: 2800,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
+                    // Tampilkan notifikasi sukses
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil Dihapus',
+                        html: 'Data karyawan <strong>' + name + '</strong> telah dihapus dari sistem.',
+                        confirmButtonColor: '#4f6ef7',
+                        timer: 2800, // Otomatis hilang dalam 2.8 detik
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    });
 
-                // Animate row removal
-                $row.css({ transition: 'opacity .35s ease, transform .35s ease', opacity: 0, transform: 'translateX(20px)' });
-                setTimeout(function() { $row.remove(); }, 380);
+                    // Jalankan animasi CSS untuk menghilangkan baris tanpa harus refresh halaman
+                    $row.css({ transition: 'opacity .35s ease, transform .35s ease', opacity: 0, transform: 'translateX(20px)' });
+                    setTimeout(function() { 
+                        $row.remove(); 
+                    }, 380);
+                },
+                error: function(xhr) {
+                    // Tangani jika terjadi error di server
+                    var errorMsg = 'Terjadi kesalahan saat menghapus data. Silakan coba lagi.';
+                    if(xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
 
-            }, 1600);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal Menghapus',
+                        text: errorMsg,
+                        confirmButtonColor: '#f05252'
+                    });
+                }
+            });
         });
     });
 

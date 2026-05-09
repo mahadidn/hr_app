@@ -12,6 +12,8 @@ class Employee extends Model
 
     protected $table = "Employee";
 
+    public $timestamps = false;
+
     protected $fillable = [
         "NIK",
         "Full_name",
@@ -24,4 +26,9 @@ class Employee extends Model
         "Join_date",
         "Join_end"
     ];
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'Dept_id', 'id');
+    }
 }

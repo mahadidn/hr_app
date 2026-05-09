@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,7 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
 
     // Master Data
-    Route::view('/employees', 'employees.index')->name('employees');
+    Route::resource('employees', EmployeeController::class)
+        ->except(['create', 'show', 'edit']);
 
     // Master Data Department
     Route::resource('departments', DepartmentController::class)
