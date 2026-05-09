@@ -13,6 +13,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// redirect to login
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
+
+// Login Page
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
+// Dashboard Page
+Route::get('/dashboard', function () {
+
+    return view('dashboard');
+})->name('dashboard');
