@@ -27,9 +27,6 @@
             <p class="emp-subheading">Kelola seluruh data karyawan aktif perusahaan.</p>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-            <button class="btn-secondary-emp">
-                <i class="fa-solid fa-file-arrow-down"></i> Export
-            </button>
             <button class="btn-primary-emp" id="btnAddEmployee"
                     data-bs-toggle="modal" data-bs-target="#modalAddEmployee">
                 <i class="fa-solid fa-plus"></i> Add New Employee
@@ -42,18 +39,6 @@
         <div class="stat-chip-mini">
             <span class="chip-dot" style="background:#4f6ef7;"></span>
             Total Employees: <strong>2,418</strong>
-        </div>
-        <div class="stat-chip-mini">
-            <span class="chip-dot" style="background:#0ea66e;"></span>
-            Active: <strong>2,390</strong>
-        </div>
-        <div class="stat-chip-mini">
-            <span class="chip-dot" style="background:#f59e0b;"></span>
-            On Leave: <strong>28</strong>
-        </div>
-        <div class="stat-chip-mini">
-            <span class="chip-dot" style="background:#f05252;"></span>
-            Inactive: <strong>18</strong>
         </div>
     </div>
 
@@ -348,7 +333,7 @@
                                 <input type="date" class="f-input" name="join_date" id="addJoinDate" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="f-label">Contract End Date
+                                <label class="f-label">Join End
                                     <span style="color:var(--text-muted);font-weight:400;">(opsional)</span>
                                 </label>
                                 <input type="date" class="f-input" name="join_end" id="addJoinEnd">
@@ -475,7 +460,7 @@
                                 <input type="date" class="f-input" name="join_date" id="editJoinDate" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="f-label">Contract End Date</label>
+                                <label class="f-label">Join End</label>
                                 <input type="date" class="f-input" name="join_end" id="editJoinEnd">
                             </div>
                         </div>
@@ -564,7 +549,7 @@
                             <div class="detail-item-val" id="viewJoinDate">—</div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-item-label"><i class="fa-solid fa-calendar-xmark me-1"></i> Contract End</div>
+                            <div class="detail-item-label"><i class="fa-solid fa-calendar-xmark me-1"></i> Join End</div>
                             <div class="detail-item-val" id="viewJoinEnd">—</div>
                         </div>
                     </div>
@@ -809,7 +794,7 @@ $(function () {
         $('#viewBirthPlace').text(birthPlace || '—');
         $('#viewBirthDate').text(birthDate ? formatDate(birthDate) : '—');
         $('#viewJoinDate').text(joinDate ? formatDate(joinDate) : '—');
-        $('#viewJoinEnd').text(joinEnd ? formatDate(joinEnd) : 'Permanent');
+        $('#viewJoinEnd').text(joinEnd ? formatDate(joinEnd) : '—');
 
         if (gender === 'Male') {
             $('#viewEmpGenderBadge')

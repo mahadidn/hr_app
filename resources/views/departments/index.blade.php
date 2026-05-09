@@ -55,30 +55,24 @@
 
     {{-- ============ FILTER & SEARCH ============ --}}
     <div class="filter-card">
-        <div class="filter-row">
-
+        <form class="filter-row" action="{{ url('/departments') }}" method="GET">
             <div class="filter-field search-field" style="flex:1;">
                 <span class="filter-label"><i class="fa-solid fa-magnifying-glass me-1"></i> Search Department</span>
                 <div style="position:relative;">
-                    <i class="fa-solid fa-magnifying-glass s-icon"
-                       style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;pointer-events:none;"></i>
-                    <input type="text" class="dept-form-input" id="searchDept"
-                           placeholder="Search department name…"
-                           style="padding-left:38px;width:100%;"
-                           value="{{ request('search') }}">
+                    <i class="fa-solid fa-magnifying-glass s-icon" style="..."></i>
+                    <!-- Tambahkan attribute name="search" -->
+                    <input type="text" name="search" class="dept-form-input" id="searchDept" placeholder="Search department name…" style="padding-left:38px;width:100%;" value="{{ request('search') }}">
                 </div>
             </div>
-
             <div class="filter-actions" style="align-self:flex-end;">
-                <button class="btn-primary-dept" id="btnApplyFilter" style="padding:9px 18px;">
+                <button type="submit" class="btn-primary-dept" style="padding:9px 18px;">
                     <i class="fa-solid fa-filter"></i> Filter
                 </button>
-                <button class="btn-secondary-dept" id="btnResetFilter">
+                <a href="{{ url('/departments') }}" class="btn-secondary-dept" style="text-decoration:none;">
                     <i class="fa-solid fa-xmark"></i> Reset
-                </button>
+                </a>
             </div>
-
-        </div>
+        </form>
     </div>
 
     {{-- ============ TABLE CARD ============ --}}
@@ -101,10 +95,6 @@
             <table class="dept-table" id="deptTable">
                 <thead>
                     <tr>
-                        <th style="width:44px;padding-left:20px;">
-                            <input type="checkbox" id="checkAll"
-                                   style="accent-color:var(--accent);width:15px;height:15px;">
-                        </th>
                         <th>#</th>
                         <th>Department Name</th>
                         <th>Employees</th>
@@ -112,82 +102,60 @@
                     </tr>
                 </thead>
                 <tbody id="deptTbody">
-
                     @php
-                        $deptColors = [
-                            '#4f6ef7','#0ea66e','#f59e0b','#0284c7',
-                            '#7c3aed','#db2777','#64748b','#ef4444',
-                            '#8b5cf6','#06b6d4',
-                        ];
-
-                        $departments = [
-                            ['id'=>1,  'name'=>'Information Technology',  'emp_count'=>42],
-                            ['id'=>2,  'name'=>'Finance & Accounting',     'emp_count'=>27],
-                            ['id'=>3,  'name'=>'Human Resources',          'emp_count'=>15],
-                            ['id'=>4,  'name'=>'Engineering',              'emp_count'=>88],
-                            ['id'=>5,  'name'=>'Marketing',                'emp_count'=>34],
-                            ['id'=>6,  'name'=>'Operations',               'emp_count'=>61],
-                            ['id'=>7,  'name'=>'Legal',                    'emp_count'=>9],
-                            ['id'=>8,  'name'=>'Sales',                    'emp_count'=>53],
-                            ['id'=>9,  'name'=>'Product',                  'emp_count'=>22],
-                            ['id'=>10, 'name'=>'Research & Development',   'emp_count'=>18],
-                        ];
+                        $deptColors = ['#4f6ef7','#0ea66e','#f59e0b','#0284c7','#7c3aed','#db2777','#64748b','#ef4444','#8b5cf6','#06b6d4'];
                     @endphp
 
-                    @foreach($departments as $i => $dept)
-                    @php $color = $deptColors[$i % count($deptColors)]; @endphp
-                    <tr data-id="{{ $dept['id'] }}" data-name="{{ $dept['name'] }}">
-                        <td style="padding-left:20px;">
-                            <input type="checkbox" class="row-check"
-                                   style="accent-color:var(--accent);width:15px;height:15px;">
-                        </td>
-                        <td>
-                            <span class="dept-index-badge">{{ str_pad($dept['id'], 2, '0', STR_PAD_LEFT) }}</span>
-                        </td>
-                        <td>
-                            <div class="dept-cell">
-                                <div class="dept-icon-box"
-                                     style="background:{{ $color }}1a; color:{{ $color }};">
-                                    <i class="fa-solid fa-building"></i>
+                    @forelse($departments as $i => $dept)
+                        @php $color = $deptColors[$i % count($deptColors)]; @endphp
+                        <tr data-id="{{ $dept->id }}" data-name="{{ $dept->Dept_name }}">
+                            <!-- ... checkbox dan index ... -->
+                            <td>
+                                {{ $i+1 }}
+                            </td>
+                            <td>
+                                <div class="dept-cell">
+                                    <div class="dept-icon-box" style="background:{{ $color }}1a; color:{{ $color }};">
+                                        <i class="fa-solid fa-building"></i>
+                                    </div>
+                                    <div>
+                                        <!-- Menggunakan Object DB: $dept->Dept_name -->
+                                        <div class="dept-name-text">{{ $dept->Dept_name }}</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div class="dept-name-text">{{ $dept['name'] }}</div>
-                                    <div class="dept-meta-text">dept.{{ strtolower(str_replace([' ', '&', '/'], ['-', 'n', ''], $dept['name'])) }}@nexahr.id</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="emp-count-chip">
-                                <i class="fa-solid fa-users" style="font-size:10px;"></i>
-                                {{ $dept['emp_count'] }} employees
-                            </span>
-                        </td>
-                        <td style="text-align:center;">
+                            </td>
+                            <td>
+                                <span class="emp-count-chip">
+                                    <i class="fa-solid fa-users" style="font-size:10px;"></i>
+                                    <!-- Jika ada relasi: $dept->employees_count, jika tidak isi 0 sementara -->
+                                    {{ $dept->employees_count ?? 0 }} employees
+                                </span>
+                            </td>
+                            <!-- ... kolom action pastikan memanggil $dept->id dan $dept->Dept_name ... -->
+                            <td style="text-align:center;">
                             <div class="action-group" style="justify-content:center;">
-                                <a href="{{ url('/employees?dept_id=' . $dept['id']) }}"
-                                   class="btn-act btn-act-view"
-                                   title="Lihat Karyawan">
-                                    <i class="fa-solid fa-users"></i>
-                                </a>
                                 <button class="btn-act btn-act-edit"
                                         title="Edit Department"
                                         data-action="edit"
-                                        data-id="{{ $dept['id'] }}"
-                                        data-name="{{ $dept['name'] }}">
+                                        data-id="{{ $dept->id }}"
+                                        data-name="{{ $dept->Dept_name }}">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
                                 <button class="btn-act btn-act-del"
                                         title="Delete Department"
                                         data-action="delete"
-                                        data-id="{{ $dept['id'] }}"
-                                        data-name="{{ $dept['name'] }}">
+                                        data-id="{{ $dept->id }}"
+                                        data-name="{{ $dept->Dept_name }}">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
                         </td>
-                    </tr>
-                    @endforeach
-
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">Belum ada data departemen.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -199,12 +167,7 @@
                 dari <strong id="showTotal">10</strong> departemen
             </div>
             <div class="pagination-wrap">
-                <button class="pg-btn"><i class="fa-solid fa-chevron-left" style="font-size:10px;"></i></button>
-                <button class="pg-btn active">1</button>
-                <button class="pg-btn">2</button>
-                <span style="display:flex;align-items:center;padding:0 4px;color:var(--text-muted);font-size:12px;">…</span>
-                <button class="pg-btn">18</button>
-                <button class="pg-btn"><i class="fa-solid fa-chevron-right" style="font-size:10px;"></i></button>
+                {{ $departments->links('pagination::bootstrap-4') }} <!-- Sesuaikan dengan view pagination Anda -->
             </div>
         </div>
 

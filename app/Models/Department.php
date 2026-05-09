@@ -12,6 +12,8 @@ class Department extends Model
 
     protected $table = "Department";
 
+    public $timestamps = false;
+
     protected $fillable = [
         "Dept_name"
     ];

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DepartmentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,7 +40,10 @@ Route::middleware('auth')->group(function () {
 
     // Master Data
     Route::view('/employees', 'employees.index')->name('employees');
-    Route::view('/departments', 'departments.index')->name('departments');
+
+    // Master Data Department
+    Route::resource('departments', DepartmentController::class)
+        ->except(['create', 'show', 'edit']);
 
     // Transactions / Operations
     Route::view('/attendance', 'attendance.index')->name('attendance');
