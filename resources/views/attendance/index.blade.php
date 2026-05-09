@@ -7,7 +7,7 @@
      PAGE CSS
 ================================================================ --}}
 @section('css')
-
+    <link href="{{ asset('css/attendance.css') }}" rel="stylesheet">
 @endsection
 
 
