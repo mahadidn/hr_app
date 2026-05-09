@@ -7,7 +7,7 @@
      PAGE CSS
 ================================================================ --}}
 @section('css')
-    <link rel="stylesheet" href="{{ asset('css/employee.css') }}">
+    <link href="{{ asset('css/employee.css') }}" rel="stylesheet">
 @endsection
 
 
@@ -18,313 +18,199 @@
 
     {{-- ============ PAGE HEADER ============ --}}
     <div class="emp-page-header">
-        <div>
-            <div class="emp-eyebrow"><span class="pulse-dot"></span> Master Data</div>
+        <div class="emp-heading-group">
+            <div class="emp-eyebrow">
+                <span class="pulse-dot"></span>
+                Master Data
+            </div>
             <h1 class="emp-heading">Employee Management</h1>
-            <p class="emp-subheading">Kelola seluruh data karyawan perusahaan di satu tempat.</p>
+            <p class="emp-subheading">Kelola seluruh data karyawan aktif perusahaan.</p>
         </div>
-        <div class="header-chips">
-            <div class="stat-chip">
-                <i class="fa-solid fa-users" style="color:var(--accent-text);"></i>
-                Total: <strong>2,418</strong>
-            </div>
-            <div class="stat-chip">
-                <i class="fa-solid fa-user-check" style="color:#0ea66e;"></i>
-                Aktif: <strong>2,390</strong>
-            </div>
-            <button class="btn-add-employee" data-bs-toggle="modal" data-bs-target="#modalAddEmployee">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <button class="btn-secondary-emp">
+                <i class="fa-solid fa-file-arrow-down"></i> Export
+            </button>
+            <button class="btn-primary-emp" id="btnAddEmployee"
+                    data-bs-toggle="modal" data-bs-target="#modalAddEmployee">
                 <i class="fa-solid fa-plus"></i> Add New Employee
             </button>
         </div>
     </div>
 
-    {{-- ============ FILTER / SEARCH BAR ============ --}}
+    {{-- ============ STATS MINI ROW ============ --}}
+    <div class="stats-row mb-3">
+        <div class="stat-chip-mini">
+            <span class="chip-dot" style="background:#4f6ef7;"></span>
+            Total Employees: <strong>2,418</strong>
+        </div>
+        <div class="stat-chip-mini">
+            <span class="chip-dot" style="background:#0ea66e;"></span>
+            Active: <strong>2,390</strong>
+        </div>
+        <div class="stat-chip-mini">
+            <span class="chip-dot" style="background:#f59e0b;"></span>
+            On Leave: <strong>28</strong>
+        </div>
+        <div class="stat-chip-mini">
+            <span class="chip-dot" style="background:#f05252;"></span>
+            Inactive: <strong>18</strong>
+        </div>
+    </div>
+
+    {{-- ============ FILTER & SEARCH ============ --}}
     <div class="filter-card">
-        {{-- Department filter --}}
-        <div class="filter-group">
-            <span class="filter-label"><i class="fa-solid fa-building me-1"></i>Filter Departemen</span>
-            <select class="filter-select" id="filterDept">
-                <option value="">Semua Departemen</option>
-                <option value="IT">IT / Engineering</option>
-                <option value="HRD">Human Resources</option>
-                <option value="FIN">Finance</option>
-                <option value="MKT">Marketing</option>
-                <option value="OPS">Operations</option>
-                <option value="LEG">Legal</option>
-                <option value="PRD">Product</option>
-            </select>
-        </div>
+        <div class="filter-row">
 
-
-        {{-- Search --}}
-        <div class="filter-group" style="flex:1;">
-            <span class="filter-label"><i class="fa-solid fa-magnifying-glass me-1"></i>Cari Karyawan</span>
-            <div class="search-wrap">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" class="search-input" id="searchEmployee"
-                       placeholder="Ketik NIK atau nama karyawan…">
+            {{-- Left: Filter by Department --}}
+            <div class="filter-field">
+                <span class="filter-label"><i class="fa-solid fa-building me-1"></i> Filter by Department</span>
+                <select class="emp-form-select" id="filterDept">
+                    <option value="">All Departments</option>
+                    <option value="engineering">Engineering</option>
+                    <option value="finance">Finance</option>
+                    <option value="hr">Human Resources</option>
+                    <option value="it">IT Infrastructure</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="operations">Operations</option>
+                    <option value="legal">Legal</option>
+                    <option value="sales">Sales</option>
+                </select>
             </div>
-        </div>
 
-        <div class="filter-actions">
-            <button class="btn-filter primary" id="btnApplyFilter">
-                <i class="fa-solid fa-filter"></i> Filter
-            </button>
-            <button class="btn-filter secondary" id="btnResetFilter">
-                <i class="fa-solid fa-xmark"></i> Reset
-            </button>
+            
+
+            {{-- Right: Search --}}
+            <div class="filter-field search-field" style="flex:1;">
+                <span class="filter-label"><i class="fa-solid fa-magnifying-glass me-1"></i> Search Employee</span>
+                <div style="position:relative;">
+                    <i class="fa-solid fa-magnifying-glass s-icon" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;pointer-events:none;"></i>
+                    <input type="text" class="emp-form-input" id="searchEmp"
+                           placeholder="Search NIK or Name…"
+                           style="padding-left:38px;width:100%;">
+                </div>
+            </div>
+
+            {{-- Actions --}}
+            <div class="filter-actions" style="align-self:flex-end;">
+                <button class="btn-primary-emp" id="btnApplyFilter" style="padding:9px 18px;">
+                    <i class="fa-solid fa-filter"></i> Filter
+                </button>
+                <button class="btn-secondary-emp" id="btnResetFilter">
+                    <i class="fa-solid fa-xmark"></i> Reset
+                </button>
+            </div>
+
         </div>
     </div>
 
     {{-- ============ TABLE CARD ============ --}}
-    <div class="emp-card">
+    <div class="table-card">
 
-        <div class="emp-card-header">
-            <div class="emp-card-title">
-                <span class="title-icon"><i class="fa-solid fa-id-card"></i></span>
+        <div class="table-card-header">
+            <div class="table-card-title">
+                <i class="fa-solid fa-users" style="color:var(--accent-text);font-size:16px;"></i>
                 Daftar Karyawan
-                <span style="font-size:12px;font-weight:500;color:var(--text-muted);">— 2,418 records</span>
+                <span class="title-pill" id="rowCountPill">2,418 records</span>
             </div>
-            <div class="card-header-right">
-                <button class="btn-card-action"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
-                <button class="btn-card-action"><i class="fa-solid fa-file-excel"></i> Export</button>
-                <button class="btn-card-action"><i class="fa-solid fa-print"></i> Print</button>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn-secondary-emp" style="padding:7px 14px;font-size:12px;">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh
+                </button>
+                <button class="btn-secondary-emp" style="padding:7px 14px;font-size:12px;">
+                    <i class="fa-solid fa-sliders"></i> Columns
+                </button>
             </div>
         </div>
 
-        <div class="table-responsive-wrap">
-            <table class="emp-table" id="employeeTable">
+        <div class="table-wrap">
+            <table class="emp-table" id="empTable">
                 <thead>
                     <tr>
-                        <th class="th-check">
-                            <input type="checkbox" id="checkAll"
-                                   style="accent-color:var(--accent);width:15px;height:15px;">
+                        <th style="width:44px;padding-left:20px;">
+                            <input type="checkbox" id="checkAll" style="accent-color:var(--accent);width:15px;height:15px;">
                         </th>
-                        <th class="th-num">#</th>
-                        <th>NIK</th>
-                        <th>Nama Karyawan</th>
-                        <th>Departemen</th>
-                        <th>Jabatan</th>
-                        <th>Tgl. Bergabung</th>
-                        <th style="text-align:center;">Aksi</th>
+                        <th class="sortable" data-col="nik">NIK <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-col="name">Name <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-col="dept">Department <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th class="sortable" data-col="desig">Designation <i class="fa-solid fa-sort sort-icon"></i></th>
+                        <th style="text-align:center;">Action</th>
                     </tr>
                 </thead>
-                <tbody id="employeeTbody">
+                <tbody id="empTbody">
 
-                    {{-- Row 1 --}}
-                    <tr data-dept="IT" data-gender="Male">
-                        <td class="td-check"><input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;"></td>
-                        <td class="td-num">1</td>
-                        <td><span class="nik-mono">1001-ENG</span></td>
+                    @php
+                        $employees = [
+                            ['id'=>1, 'nik'=>'1001-ENG-2019', 'name'=>'Ahmad Wijaya',       'dept'=>'Engineering',     'dept_color'=>'#4f6ef7', 'desig'=>'Senior Backend Engineer',  'gender'=>'Male',   'initials'=>'AW', 'grad'=>'linear-gradient(135deg,#4f6ef7,#7c3aed)', 'phone'=>'+62 812-0001-0001', 'join'=>'2019-03-15', 'join_end'=>'', 'birth_place'=>'Jakarta', 'birth_date'=>'1992-05-20'],
+                            ['id'=>2, 'nik'=>'1045-HRD-2020', 'name'=>'Sari Rahayu',        'dept'=>'Human Resources', 'dept_color'=>'#f59e0b', 'desig'=>'HR Specialist',             'gender'=>'Female', 'initials'=>'SR', 'grad'=>'linear-gradient(135deg,#f59e0b,#ef4444)', 'phone'=>'+62 813-0002-0002', 'join'=>'2020-07-01', 'join_end'=>'', 'birth_place'=>'Bandung',  'birth_date'=>'1995-11-10'],
+                            ['id'=>3, 'nik'=>'1012-FIN-2018', 'name'=>'Budi Prasetyo',      'dept'=>'Finance',         'dept_color'=>'#0ea66e', 'desig'=>'Finance Manager',           'gender'=>'Male',   'initials'=>'BP', 'grad'=>'linear-gradient(135deg,#0ea66e,#0284c7)', 'phone'=>'+62 811-0003-0003', 'join'=>'2018-01-10', 'join_end'=>'', 'birth_place'=>'Surabaya', 'birth_date'=>'1988-03-25'],
+                            ['id'=>4, 'nik'=>'1088-MKT-2021', 'name'=>'Dewi Nuraini',       'dept'=>'Marketing',       'dept_color'=>'#db2777', 'desig'=>'Digital Marketing Lead',    'gender'=>'Female', 'initials'=>'DN', 'grad'=>'linear-gradient(135deg,#7c3aed,#db2777)', 'phone'=>'+62 857-0004-0004', 'join'=>'2021-02-20', 'join_end'=>'', 'birth_place'=>'Semarang', 'birth_date'=>'1997-08-14'],
+                            ['id'=>5, 'nik'=>'1031-ITS-2019', 'name'=>'Reza Firmansyah',    'dept'=>'IT Infrastructure','dept_color'=>'#0284c7','desig'=>'Network Engineer',          'gender'=>'Male',   'initials'=>'RF', 'grad'=>'linear-gradient(135deg,#0284c7,#0ea66e)', 'phone'=>'+62 878-0005-0005', 'join'=>'2019-08-05', 'join_end'=>'', 'birth_place'=>'Yogyakarta','birth_date'=>'1994-12-01'],
+                            ['id'=>6, 'nik'=>'1060-LGL-2022', 'name'=>'Ninda Kusumawati',   'dept'=>'Legal',           'dept_color'=>'#7c3aed', 'desig'=>'Legal Counsel',             'gender'=>'Female', 'initials'=>'NK', 'grad'=>'linear-gradient(135deg,#7c3aed,#4f6ef7)', 'phone'=>'+62 896-0006-0006', 'join'=>'2022-04-11', 'join_end'=>'', 'birth_place'=>'Malang',   'birth_date'=>'1993-06-30'],
+                            ['id'=>7, 'nik'=>'1075-SLS-2020', 'name'=>'Hari Santoso',        'dept'=>'Sales',           'dept_color'=>'#ef4444', 'desig'=>'Sales Executive',           'gender'=>'Male',   'initials'=>'HS', 'grad'=>'linear-gradient(135deg,#ef4444,#f59e0b)', 'phone'=>'+62 821-0007-0007', 'join'=>'2020-09-15', 'join_end'=>'', 'birth_place'=>'Bekasi',   'birth_date'=>'1991-01-17'],
+                        ];
+                    @endphp
+
+                    @foreach($employees as $emp)
+                    <tr data-id="{{ $emp['id'] }}"
+                        data-nik="{{ $emp['nik'] }}"
+                        data-name="{{ $emp['name'] }}"
+                        data-dept="{{ $emp['dept'] }}"
+                        data-desig="{{ $emp['desig'] }}"
+                        data-gender="{{ $emp['gender'] }}"
+                        data-phone="{{ $emp['phone'] }}"
+                        data-join="{{ $emp['join'] }}"
+                        data-join-end="{{ $emp['join_end'] }}"
+                        data-birth-place="{{ $emp['birth_place'] }}"
+                        data-birth-date="{{ $emp['birth_date'] }}"
+                        data-grad="{{ $emp['grad'] }}"
+                        data-initials="{{ $emp['initials'] }}"
+                        data-dept-color="{{ $emp['dept_color'] }}">
+                        <td style="padding-left:20px;">
+                            <input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;">
+                        </td>
+                        <td><span class="nik-badge">{{ $emp['nik'] }}</span></td>
                         <td>
                             <div class="emp-cell">
-                                <div class="emp-avatar" style="background:linear-gradient(135deg,#4f6ef7,#7c3aed);">AW</div>
+                                <div class="emp-avatar" style="background:{{ $emp['grad'] }};">{{ $emp['initials'] }}</div>
                                 <div>
-                                    <div class="emp-full-name">Ahmad Wijaya</div>
-                                    <div class="emp-email">a.wijaya@nexahr.com</div>
+                                    <div class="emp-name">{{ $emp['name'] }}</div>
+                                    <div class="emp-email">{{ strtolower(str_replace(' ', '.', $emp['name'])) }}@nexahr.id</div>
                                 </div>
                             </div>
                         </td>
-                        <td><span class="dept-badge" style="background:rgba(79,110,247,.1);color:var(--accent-text);"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;"></span>IT / Engineering</span></td>
-                        <td><span class="desig-text">Senior Backend Engineer</span></td>
-                        <td style="font-size:12.5px;color:var(--text-secondary);">15 Jan 2020</td>
+                        <td>
+                            <span class="dept-badge">
+                                <span class="dept-dot" style="background:{{ $emp['dept_color'] }};"></span>
+                                {{ $emp['dept'] }}
+                            </span>
+                        </td>
+                        <td><span class="desig-text">{{ $emp['desig'] }}</span></td>
                         <td style="text-align:center;">
-                            <div class="action-group">
-                                <button class="btn-action view" title="View Detail"
-                                    data-id="1" data-name="Ahmad Wijaya" data-nik="1001-ENG"
-                                    data-dept="IT / Engineering" data-desig="Senior Backend Engineer"
-                                    data-gender="Male" data-birth-place="Jakarta" data-birth-date="1992-04-10"
-                                    data-phone="081234567890" data-join="2020-01-15" data-join-end="-"
-                                    data-initials="AW" data-color="linear-gradient(135deg,#4f6ef7,#7c3aed)">
+                            <div class="action-group" style="justify-content:center;">
+                                <button class="btn-act btn-act-view"
+                                        title="View Detail"
+                                        data-action="view"
+                                        data-row-id="{{ $emp['id'] }}">
                                     <i class="fa-solid fa-eye"></i>
                                 </button>
-                                <button class="btn-action edit" title="Edit"
-                                    data-id="1" data-name="Ahmad Wijaya" data-nik="1001-ENG"
-                                    data-dept-val="IT" data-dept-label="IT / Engineering"
-                                    data-desig="Senior Backend Engineer" data-gender="Male"
-                                    data-birth-place="Jakarta" data-birth-date="1992-04-10"
-                                    data-phone="081234567890" data-join="2020-01-15" data-join-end="">
+                                <button class="btn-act btn-act-edit"
+                                        title="Edit Employee"
+                                        data-action="edit"
+                                        data-row-id="{{ $emp['id'] }}">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button class="btn-action delete" title="Delete"
-                                    data-id="1" data-name="Ahmad Wijaya" data-nik="1001-ENG">
+                                <button class="btn-act btn-act-del"
+                                        title="Delete Employee"
+                                        data-action="delete"
+                                        data-row-id="{{ $emp['id'] }}"
+                                        data-name="{{ $emp['name'] }}"
+                                        data-nik="{{ $emp['nik'] }}">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
-
-                    {{-- Row 2 --}}
-                    <tr data-dept="HRD" data-gender="Female">
-                        <td class="td-check"><input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;"></td>
-                        <td class="td-num">2</td>
-                        <td><span class="nik-mono">1045-HRD</span></td>
-                        <td>
-                            <div class="emp-cell">
-                                <div class="emp-avatar" style="background:linear-gradient(135deg,#db2777,#f59e0b);">SR</div>
-                                <div>
-                                    <div class="emp-full-name">Sari Rahayu</div>
-                                    <div class="emp-email">sari.r@nexahr.com</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="dept-badge" style="background:rgba(219,39,119,.1);color:#db2777;"><span style="width:6px;height:6px;border-radius:50%;background:#db2777;display:inline-block;"></span>Human Resources</span></td>
-                        <td><span class="desig-text">HR Manager</span></td>
-                        <td style="font-size:12.5px;color:var(--text-secondary);">03 Mar 2018</td>
-                        <td style="text-align:center;">
-                            <div class="action-group">
-                                <button class="btn-action view" title="View Detail"
-                                    data-id="2" data-name="Sari Rahayu" data-nik="1045-HRD"
-                                    data-dept="Human Resources" data-desig="HR Manager"
-                                    data-gender="Female" data-birth-place="Bandung" data-birth-date="1990-08-22"
-                                    data-phone="082233445566" data-join="2018-03-03" data-join-end="-"
-                                    data-initials="SR" data-color="linear-gradient(135deg,#db2777,#f59e0b)">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                                <button class="btn-action edit" title="Edit"
-                                    data-id="2" data-name="Sari Rahayu" data-nik="1045-HRD"
-                                    data-dept-val="HRD" data-dept-label="Human Resources"
-                                    data-desig="HR Manager" data-gender="Female"
-                                    data-birth-place="Bandung" data-birth-date="1990-08-22"
-                                    data-phone="082233445566" data-join="2018-03-03" data-join-end="">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button class="btn-action delete" title="Delete"
-                                    data-id="2" data-name="Sari Rahayu" data-nik="1045-HRD">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    {{-- Row 3 --}}
-                    <tr data-dept="FIN" data-gender="Male">
-                        <td class="td-check"><input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;"></td>
-                        <td class="td-num">3</td>
-                        <td><span class="nik-mono">1012-FIN</span></td>
-                        <td>
-                            <div class="emp-cell">
-                                <div class="emp-avatar" style="background:linear-gradient(135deg,#0ea66e,#0284c7);">BP</div>
-                                <div>
-                                    <div class="emp-full-name">Budi Prasetyo</div>
-                                    <div class="emp-email">budi.p@nexahr.com</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="dept-badge" style="background:rgba(14,166,110,.1);color:#0ea66e;"><span style="width:6px;height:6px;border-radius:50%;background:#0ea66e;display:inline-block;"></span>Finance</span></td>
-                        <td><span class="desig-text">Financial Analyst</span></td>
-                        <td style="font-size:12.5px;color:var(--text-secondary);">07 Jun 2019</td>
-                        <td style="text-align:center;">
-                            <div class="action-group">
-                                <button class="btn-action view" title="View Detail"
-                                    data-id="3" data-name="Budi Prasetyo" data-nik="1012-FIN"
-                                    data-dept="Finance" data-desig="Financial Analyst"
-                                    data-gender="Male" data-birth-place="Surabaya" data-birth-date="1994-01-30"
-                                    data-phone="085566778899" data-join="2019-06-07" data-join-end="-"
-                                    data-initials="BP" data-color="linear-gradient(135deg,#0ea66e,#0284c7)">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                                <button class="btn-action edit" title="Edit"
-                                    data-id="3" data-name="Budi Prasetyo" data-nik="1012-FIN"
-                                    data-dept-val="FIN" data-dept-label="Finance"
-                                    data-desig="Financial Analyst" data-gender="Male"
-                                    data-birth-place="Surabaya" data-birth-date="1994-01-30"
-                                    data-phone="085566778899" data-join="2019-06-07" data-join-end="">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button class="btn-action delete" title="Delete"
-                                    data-id="3" data-name="Budi Prasetyo" data-nik="1012-FIN">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    {{-- Row 4 --}}
-                    <tr data-dept="MKT" data-gender="Female">
-                        <td class="td-check"><input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;"></td>
-                        <td class="td-num">4</td>
-                        <td><span class="nik-mono">1088-MKT</span></td>
-                        <td>
-                            <div class="emp-cell">
-                                <div class="emp-avatar" style="background:linear-gradient(135deg,#7c3aed,#db2777);">DN</div>
-                                <div>
-                                    <div class="emp-full-name">Dewi Nuraini</div>
-                                    <div class="emp-email">dewi.n@nexahr.com</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="dept-badge" style="background:rgba(124,58,237,.1);color:#7c3aed;"><span style="width:6px;height:6px;border-radius:50%;background:#7c3aed;display:inline-block;"></span>Marketing</span></td>
-                        <td><span class="desig-text">Digital Marketing Lead</span></td>
-                        <td style="font-size:12.5px;color:var(--text-secondary);">22 Aug 2021</td>
-                        <td style="text-align:center;">
-                            <div class="action-group">
-                                <button class="btn-action view" title="View Detail"
-                                    data-id="4" data-name="Dewi Nuraini" data-nik="1088-MKT"
-                                    data-dept="Marketing" data-desig="Digital Marketing Lead"
-                                    data-gender="Female" data-birth-place="Yogyakarta" data-birth-date="1997-11-05"
-                                    data-phone="087788990011" data-join="2021-08-22" data-join-end="-"
-                                    data-initials="DN" data-color="linear-gradient(135deg,#7c3aed,#db2777)">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                                <button class="btn-action edit" title="Edit"
-                                    data-id="4" data-name="Dewi Nuraini" data-nik="1088-MKT"
-                                    data-dept-val="MKT" data-dept-label="Marketing"
-                                    data-desig="Digital Marketing Lead" data-gender="Female"
-                                    data-birth-place="Yogyakarta" data-birth-date="1997-11-05"
-                                    data-phone="087788990011" data-join="2021-08-22" data-join-end="">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button class="btn-action delete" title="Delete"
-                                    data-id="4" data-name="Dewi Nuraini" data-nik="1088-MKT">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    {{-- Row 5 --}}
-                    <tr data-dept="IT" data-gender="Male">
-                        <td class="td-check"><input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;"></td>
-                        <td class="td-num">5</td>
-                        <td><span class="nik-mono">1031-ITS</span></td>
-                        <td>
-                            <div class="emp-cell">
-                                <div class="emp-avatar" style="background:linear-gradient(135deg,#0284c7,#0ea66e);">RF</div>
-                                <div>
-                                    <div class="emp-full-name">Reza Firmansyah</div>
-                                    <div class="emp-email">reza.f@nexahr.com</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="dept-badge" style="background:rgba(2,132,199,.1);color:#0284c7;"><span style="width:6px;height:6px;border-radius:50%;background:#0284c7;display:inline-block;"></span>IT Infrastructure</span></td>
-                        <td><span class="desig-text">Network Engineer</span></td>
-                        <td style="font-size:12.5px;color:var(--text-secondary);">10 Feb 2022</td>
-                        <td style="text-align:center;">
-                            <div class="action-group">
-                                <button class="btn-action view" title="View Detail"
-                                    data-id="5" data-name="Reza Firmansyah" data-nik="1031-ITS"
-                                    data-dept="IT Infrastructure" data-desig="Network Engineer"
-                                    data-gender="Male" data-birth-place="Semarang" data-birth-date="1995-07-18"
-                                    data-phone="089900112233" data-join="2022-02-10" data-join-end="-"
-                                    data-initials="RF" data-color="linear-gradient(135deg,#0284c7,#0ea66e)">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                                <button class="btn-action edit" title="Edit"
-                                    data-id="5" data-name="Reza Firmansyah" data-nik="1031-ITS"
-                                    data-dept-val="IT" data-dept-label="IT Infrastructure"
-                                    data-desig="Network Engineer" data-gender="Male"
-                                    data-birth-place="Semarang" data-birth-date="1995-07-18"
-                                    data-phone="089900112233" data-join="2022-02-10" data-join-end="">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button class="btn-action delete" title="Delete"
-                                    data-id="5" data-name="Reza Firmansyah" data-nik="1031-ITS">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    @endforeach
 
                 </tbody>
             </table>
@@ -332,16 +218,17 @@
 
         {{-- Table Footer --}}
         <div class="table-footer">
-            <div class="table-info-text">
-                Menampilkan <strong>1–5</strong> dari <strong>2,418</strong> karyawan
+            <div class="table-info">
+                Menampilkan <strong id="showFrom">1</strong>–<strong id="showTo">7</strong>
+                dari <strong id="showTotal">7</strong> karyawan
             </div>
             <div class="pagination-wrap">
                 <button class="pg-btn"><i class="fa-solid fa-chevron-left" style="font-size:10px;"></i></button>
                 <button class="pg-btn active">1</button>
                 <button class="pg-btn">2</button>
                 <button class="pg-btn">3</button>
-                <span style="display:flex;align-items:center;padding:0 4px;font-size:12px;color:var(--text-muted);">…</span>
-                <button class="pg-btn">484</button>
+                <span style="display:flex;align-items:center;padding:0 4px;color:var(--text-muted);font-size:12px;">…</span>
+                <button class="pg-btn">345</button>
                 <button class="pg-btn"><i class="fa-solid fa-chevron-right" style="font-size:10px;"></i></button>
             </div>
         </div>
@@ -353,355 +240,350 @@
     {{-- ================================================================
          MODAL: ADD NEW EMPLOYEE
     ================================================================ --}}
-    <div class="modal fade emp-modal" id="modalAddEmployee" tabindex="-1" aria-labelledby="labelAddEmployee" aria-hidden="true">
+    <div class="modal fade emp-modal" id="modalAddEmployee" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h5 class="modal-title" id="labelAddEmployee">
-                        <span class="modal-title-icon blue"><i class="fa-solid fa-user-plus"></i></span>
+                    <h5 class="modal-title">
+                        <span class="modal-title-icon"><i class="fa-solid fa-user-plus"></i></span>
                         Add New Employee
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
+
                 <div class="modal-body">
                     <form id="formAddEmployee" novalidate>
                         @csrf
 
+                        {{-- Section 1: Identity --}}
                         <div class="form-section-title">
                             <i class="fa-solid fa-id-card"></i> Data Identitas
                         </div>
-                        <div class="row g-3">
+
+                        <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="form-lbl">NIK <span class="req">*</span></label>
-                                <input type="text" class="form-ctrl" name="nik" id="add_nik"
+                                <label class="f-label">NIK <span class="req">*</span></label>
+                                <input type="text" class="f-input" name="nik" id="addNik"
                                        maxlength="13" placeholder="Contoh: 1001-ENG-2024" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-lbl">Nama Lengkap <span class="req">*</span></label>
-                                <input type="text" class="form-ctrl" name="full_name" id="add_fullname"
-                                       maxlength="50" placeholder="Nama sesuai KTP" required>
+                                <label class="f-label">Full Name <span class="req">*</span></label>
+                                <input type="text" class="f-input" name="full_name" id="addFullName"
+                                       maxlength="50" placeholder="Nama lengkap karyawan" required>
                             </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="form-lbl">Departemen <span class="req">*</span></label>
-                                {{-- Searchable Dropdown --}}
-                                <div class="searchable-select-wrapper" id="addDeptWrapper">
-                                    <div class="searchable-trigger" id="addDeptTrigger" tabindex="0">
-                                        <span class="trigger-text placeholder" id="addDeptLabel">Pilih departemen…</span>
-                                        <i class="fa-solid fa-chevron-down trigger-chevron"></i>
+                                <label class="f-label">Department <span class="req">*</span></label>
+                                {{-- Custom searchable dropdown --}}
+                                <div class="dept-dropdown-wrap" id="addDeptWrap">
+                                    <div class="dept-dropdown-display" id="addDeptDisplay">
+                                        <span class="dd-label dd-placeholder">Pilih Departemen…</span>
+                                        <i class="fa-solid fa-chevron-down dd-arrow"></i>
                                     </div>
-                                    <div class="searchable-dropdown" id="addDeptDropdown">
-                                        <div class="dd-search-wrap">
-                                            <i class="fa-solid fa-magnifying-glass dd-search-icon"></i>
-                                            <input type="text" class="dd-search-input" placeholder="Cari departemen…"
-                                                   id="addDeptSearch" autocomplete="off">
+                                    <div class="dept-dropdown-menu" id="addDeptMenu">
+                                        <div class="dept-search-wrap">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                            <input type="text" class="dept-search-input" id="addDeptSearch" placeholder="Cari departemen…">
                                         </div>
-                                        <div class="dd-list" id="addDeptList">
-                                            <div class="dd-item" data-val="IT" data-label="IT / Engineering">
-                                                <span class="dd-dot" style="background:#4f6ef7;"></span>
-                                                IT / Engineering
-                                                <i class="fa-solid fa-check dd-check"></i>
-                                            </div>
-                                            <div class="dd-item" data-val="HRD" data-label="Human Resources">
-                                                <span class="dd-dot" style="background:#db2777;"></span>
-                                                Human Resources
-                                                <i class="fa-solid fa-check dd-check"></i>
-                                            </div>
-                                            <div class="dd-item" data-val="FIN" data-label="Finance">
-                                                <span class="dd-dot" style="background:#0ea66e;"></span>
-                                                Finance
-                                                <i class="fa-solid fa-check dd-check"></i>
-                                            </div>
-                                            <div class="dd-item" data-val="MKT" data-label="Marketing">
-                                                <span class="dd-dot" style="background:#7c3aed;"></span>
-                                                Marketing
-                                                <i class="fa-solid fa-check dd-check"></i>
-                                            </div>
-                                            <div class="dd-item" data-val="OPS" data-label="Operations">
-                                                <span class="dd-dot" style="background:#f59e0b;"></span>
-                                                Operations
-                                                <i class="fa-solid fa-check dd-check"></i>
-                                            </div>
-                                            <div class="dd-item" data-val="LEG" data-label="Legal">
-                                                <span class="dd-dot" style="background:#6b7280;"></span>
-                                                Legal
-                                                <i class="fa-solid fa-check dd-check"></i>
-                                            </div>
-                                            <div class="dd-item" data-val="PRD" data-label="Product">
-                                                <span class="dd-dot" style="background:#0284c7;"></span>
-                                                Product
-                                                <i class="fa-solid fa-check dd-check"></i>
-                                            </div>
+                                        <div class="dept-option-list" id="addDeptList">
+                                            {{-- Rendered by JS --}}
                                         </div>
                                     </div>
-                                    <select name="department" class="real-select" id="add_department" required>
-                                        <option value="">Pilih</option>
-                                        <option value="IT">IT / Engineering</option>
-                                        <option value="HRD">Human Resources</option>
-                                        <option value="FIN">Finance</option>
-                                        <option value="MKT">Marketing</option>
-                                        <option value="OPS">Operations</option>
-                                        <option value="LEG">Legal</option>
-                                        <option value="PRD">Product</option>
-                                    </select>
+                                    <input type="hidden" name="department_name" id="addDeptHidden" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-lbl">Jabatan / Designation <span class="req">*</span></label>
-                                <input type="text" class="form-ctrl" name="designation" id="add_designation"
-                                       maxlength="50" placeholder="Contoh: Senior Engineer" required>
+                                <label class="f-label">Designation <span class="req">*</span></label>
+                                <input type="text" class="f-input" name="designation" id="addDesignation"
+                                       maxlength="50" placeholder="Jabatan / posisi" required>
                             </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-lbl">Gender <span class="req">*</span></label>
-                                <select class="form-ctrl" name="gender" id="add_gender" required style="padding:0 14px;cursor:pointer;">
-                                    <option value="">Pilih gender…</option>
+                                <label class="f-label">Gender <span class="req">*</span></label>
+                                <select class="f-select" name="gender" id="addGender" required>
+                                    <option value="" disabled selected>Pilih gender…</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-lbl">No. Telepon <span class="req">*</span></label>
-                                <input type="text" class="form-ctrl" name="phone_no" id="add_phone"
-                                       maxlength="13" placeholder="08xxxxxxxxxx" required>
+                                <label class="f-label">Phone No</label>
+                                <input type="text" class="f-input" name="phone_no" id="addPhone"
+                                       maxlength="13" placeholder="+62 8xx-xxxx-xxxx">
                             </div>
                         </div>
 
+                        {{-- Section 2: Personal Data --}}
                         <div class="form-section-title">
-                            <i class="fa-solid fa-cake-candles"></i> Data Pribadi
+                            <i class="fa-solid fa-cake-candles"></i> Data Personal
                         </div>
-                        <div class="row g-3">
+
+                        <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-lbl">Tempat Lahir <span class="req">*</span></label>
-                                <input type="text" class="form-ctrl" name="birth_place" id="add_birthplace"
+                                <label class="f-label">Birth Place <span class="req">*</span></label>
+                                <input type="text" class="f-input" name="birth_place" id="addBirthPlace"
                                        maxlength="50" placeholder="Kota kelahiran" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-lbl">Tanggal Lahir <span class="req">*</span></label>
-                                <input type="date" class="form-ctrl" name="birth_date" id="add_birthdate" required>
+                                <label class="f-label">Birth Date <span class="req">*</span></label>
+                                <input type="date" class="f-input" name="birth_date" id="addBirthDate" required>
                             </div>
                         </div>
 
+                        {{-- Section 3: Employment --}}
                         <div class="form-section-title">
                             <i class="fa-solid fa-briefcase"></i> Data Kepegawaian
                         </div>
+
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-lbl">Tanggal Bergabung <span class="req">*</span></label>
-                                <input type="date" class="form-ctrl" name="join_date" id="add_joindate" required>
+                                <label class="f-label">Join Date <span class="req">*</span></label>
+                                <input type="date" class="f-input" name="join_date" id="addJoinDate" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-lbl">Tanggal Berakhir Kontrak</label>
-                                <input type="date" class="form-ctrl" name="join_end_date" id="add_joinenddate">
-                                <small style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block;">
-                                    <i class="fa-solid fa-circle-info"></i> Kosongkan jika karyawan tetap.
-                                </small>
+                                <label class="f-label">Contract End Date
+                                    <span style="color:var(--text-muted);font-weight:400;">(opsional)</span>
+                                </label>
+                                <input type="date" class="f-input" name="join_end" id="addJoinEnd">
                             </div>
                         </div>
 
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
-                        <i class="fa-solid fa-xmark me-1"></i> Batal
-                    </button>
-                    <button type="button" class="btn-modal-submit blue" id="btnSaveEmployee">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan Karyawan
-                    </button>
+
+                <div class="modal-footer" style="justify-content:space-between;">
+                    <span style="font-size:12px;color:var(--text-muted);">
+                        <i class="fa-solid fa-circle-info me-1"></i> Kolom bertanda <span style="color:#f05252;font-weight:700;">*</span> wajib diisi.
+                    </span>
+                    <div style="display:flex;gap:10px;">
+                        <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i> Batal
+                        </button>
+                        <button type="button" class="btn-modal-save" id="btnSaveEmployee">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Karyawan
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
-
-
-    {{-- ================================================================
-         MODAL: VIEW EMPLOYEE
-    ================================================================ --}}
-    <div class="modal fade emp-modal" id="modalViewEmployee" tabindex="-1" aria-labelledby="labelViewEmployee" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="labelViewEmployee">
-                        <span class="modal-title-icon blue"><i class="fa-solid fa-id-badge"></i></span>
-                        Detail Karyawan
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {{-- Hero --}}
-                    <div class="view-hero">
-                        <div class="view-hero-avatar" id="viewAvatar">AW</div>
-                        <div>
-                            <div class="view-hero-name" id="viewName">—</div>
-                            <div class="view-hero-desig">
-                                <span id="viewDesig">—</span>
-                                <span style="opacity:.4;">|</span>
-                                <span id="viewDept">—</span>
-                            </div>
-                        </div>
-                    </div>
-                    {{-- Detail grid --}}
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <div class="detail-key"><i class="fa-solid fa-id-card me-1"></i>NIK</div>
-                            <div class="detail-val mono" id="viewNik">—</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-key"><i class="fa-solid fa-venus-mars me-1"></i>Gender</div>
-                            <div class="detail-val" id="viewGender">—</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-key"><i class="fa-solid fa-map-pin me-1"></i>Tempat Lahir</div>
-                            <div class="detail-val" id="viewBirthPlace">—</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-key"><i class="fa-solid fa-cake-candles me-1"></i>Tanggal Lahir</div>
-                            <div class="detail-val" id="viewBirthDate">—</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-key"><i class="fa-solid fa-phone me-1"></i>No. Telepon</div>
-                            <div class="detail-val mono" id="viewPhone">—</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-key"><i class="fa-solid fa-calendar-plus me-1"></i>Tgl. Bergabung</div>
-                            <div class="detail-val" id="viewJoin">—</div>
-                        </div>
-                        <div class="detail-item" style="grid-column:1/-1;">
-                            <div class="detail-key"><i class="fa-solid fa-calendar-xmark me-1"></i>Tgl. Akhir Kontrak</div>
-                            <div class="detail-val" id="viewJoinEnd">—</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn-modal-submit blue" id="btnViewToEdit">
-                        <i class="fa-solid fa-pen-to-square"></i> Edit Data Ini
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    {{-- END MODAL ADD --}}
 
 
     {{-- ================================================================
          MODAL: EDIT EMPLOYEE
     ================================================================ --}}
-    <div class="modal fade emp-modal" id="modalEditEmployee" tabindex="-1" aria-labelledby="labelEditEmployee" aria-hidden="true">
+    <div class="modal fade emp-modal" id="modalEditEmployee" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="labelEditEmployee">
-                        <span class="modal-title-icon amber"><i class="fa-solid fa-pen-to-square"></i></span>
-                        Edit Data Karyawan
+
+                <div class="modal-header" style="background:linear-gradient(135deg,rgba(245,158,11,.1),var(--bg-card));">
+                    <h5 class="modal-title">
+                        <span class="modal-title-icon" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </span>
+                        Edit Employee
+                        <span style="font-size:12px;font-weight:500;color:var(--text-muted);margin-left:4px;" id="editModalNikLabel"></span>
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
                 </div>
+
                 <div class="modal-body">
                     <form id="formEditEmployee" novalidate>
                         @csrf
                         @method('PUT')
-                        <input type="hidden" name="employee_id" id="edit_id">
+                        <input type="hidden" id="editEmpId" name="id">
 
                         <div class="form-section-title"><i class="fa-solid fa-id-card"></i> Data Identitas</div>
-                        <div class="row g-3">
+
+                        <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="form-lbl">NIK <span class="req">*</span></label>
-                                <input type="text" class="form-ctrl" name="nik" id="edit_nik" maxlength="13" required>
+                                <label class="f-label">NIK <span class="req">*</span></label>
+                                <input type="text" class="f-input" name="nik" id="editNik" maxlength="13" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-lbl">Nama Lengkap <span class="req">*</span></label>
-                                <input type="text" class="form-ctrl" name="full_name" id="edit_fullname" maxlength="50" required>
+                                <label class="f-label">Full Name <span class="req">*</span></label>
+                                <input type="text" class="f-input" name="full_name" id="editFullName" maxlength="50" required>
                             </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="form-lbl">Departemen <span class="req">*</span></label>
-                                <div class="searchable-select-wrapper" id="editDeptWrapper">
-                                    <div class="searchable-trigger" id="editDeptTrigger" tabindex="0">
-                                        <span class="trigger-text placeholder" id="editDeptLabel">Pilih departemen…</span>
-                                        <i class="fa-solid fa-chevron-down trigger-chevron"></i>
+                                <label class="f-label">Department <span class="req">*</span></label>
+                                <div class="dept-dropdown-wrap" id="editDeptWrap">
+                                    <div class="dept-dropdown-display" id="editDeptDisplay">
+                                        <span class="dd-label dd-placeholder">Pilih Departemen…</span>
+                                        <i class="fa-solid fa-chevron-down dd-arrow"></i>
                                     </div>
-                                    <div class="searchable-dropdown" id="editDeptDropdown">
-                                        <div class="dd-search-wrap">
-                                            <i class="fa-solid fa-magnifying-glass dd-search-icon"></i>
-                                            <input type="text" class="dd-search-input" placeholder="Cari departemen…" id="editDeptSearch" autocomplete="off">
+                                    <div class="dept-dropdown-menu" id="editDeptMenu">
+                                        <div class="dept-search-wrap">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                            <input type="text" class="dept-search-input" id="editDeptSearch" placeholder="Cari departemen…">
                                         </div>
-                                        <div class="dd-list" id="editDeptList">
-                                            <div class="dd-item" data-val="IT"  data-label="IT / Engineering"><span class="dd-dot" style="background:#4f6ef7;"></span>IT / Engineering<i class="fa-solid fa-check dd-check"></i></div>
-                                            <div class="dd-item" data-val="HRD" data-label="Human Resources"><span class="dd-dot" style="background:#db2777;"></span>Human Resources<i class="fa-solid fa-check dd-check"></i></div>
-                                            <div class="dd-item" data-val="FIN" data-label="Finance"><span class="dd-dot" style="background:#0ea66e;"></span>Finance<i class="fa-solid fa-check dd-check"></i></div>
-                                            <div class="dd-item" data-val="MKT" data-label="Marketing"><span class="dd-dot" style="background:#7c3aed;"></span>Marketing<i class="fa-solid fa-check dd-check"></i></div>
-                                            <div class="dd-item" data-val="OPS" data-label="Operations"><span class="dd-dot" style="background:#f59e0b;"></span>Operations<i class="fa-solid fa-check dd-check"></i></div>
-                                            <div class="dd-item" data-val="LEG" data-label="Legal"><span class="dd-dot" style="background:#6b7280;"></span>Legal<i class="fa-solid fa-check dd-check"></i></div>
-                                            <div class="dd-item" data-val="PRD" data-label="Product"><span class="dd-dot" style="background:#0284c7;"></span>Product<i class="fa-solid fa-check dd-check"></i></div>
-                                        </div>
+                                        <div class="dept-option-list" id="editDeptList"></div>
                                     </div>
-                                    <select name="department" class="real-select" id="edit_department" required>
-                                        <option value="">Pilih</option>
-                                        <option value="IT">IT / Engineering</option>
-                                        <option value="HRD">Human Resources</option>
-                                        <option value="FIN">Finance</option>
-                                        <option value="MKT">Marketing</option>
-                                        <option value="OPS">Operations</option>
-                                        <option value="LEG">Legal</option>
-                                        <option value="PRD">Product</option>
-                                    </select>
+                                    <input type="hidden" name="department_name" id="editDeptHidden" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-lbl">Jabatan / Designation <span class="req">*</span></label>
-                                <input type="text" class="form-ctrl" name="designation" id="edit_designation" maxlength="50" required>
+                                <label class="f-label">Designation <span class="req">*</span></label>
+                                <input type="text" class="f-input" name="designation" id="editDesignation" maxlength="50" required>
                             </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-lbl">Gender <span class="req">*</span></label>
-                                <select class="form-ctrl" name="gender" id="edit_gender" required style="padding:0 14px;cursor:pointer;">
-                                    <option value="">Pilih gender…</option>
+                                <label class="f-label">Gender <span class="req">*</span></label>
+                                <select class="f-select" name="gender" id="editGender" required>
+                                    <option value="" disabled>Pilih gender…</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-lbl">No. Telepon <span class="req">*</span></label>
-                                <input type="text" class="form-ctrl" name="phone_no" id="edit_phone" maxlength="13" required>
+                                <label class="f-label">Phone No</label>
+                                <input type="text" class="f-input" name="phone_no" id="editPhone" maxlength="13">
                             </div>
                         </div>
 
-                        <div class="form-section-title"><i class="fa-solid fa-cake-candles"></i> Data Pribadi</div>
-                        <div class="row g-3">
+                        <div class="form-section-title"><i class="fa-solid fa-cake-candles"></i> Data Personal</div>
+
+                        <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-lbl">Tempat Lahir <span class="req">*</span></label>
-                                <input type="text" class="form-ctrl" name="birth_place" id="edit_birthplace" maxlength="50" required>
+                                <label class="f-label">Birth Place <span class="req">*</span></label>
+                                <input type="text" class="f-input" name="birth_place" id="editBirthPlace" maxlength="50" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-lbl">Tanggal Lahir <span class="req">*</span></label>
-                                <input type="date" class="form-ctrl" name="birth_date" id="edit_birthdate" required>
+                                <label class="f-label">Birth Date <span class="req">*</span></label>
+                                <input type="date" class="f-input" name="birth_date" id="editBirthDate" required>
                             </div>
                         </div>
 
                         <div class="form-section-title"><i class="fa-solid fa-briefcase"></i> Data Kepegawaian</div>
+
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-lbl">Tanggal Bergabung <span class="req">*</span></label>
-                                <input type="date" class="form-ctrl" name="join_date" id="edit_joindate" required>
+                                <label class="f-label">Join Date <span class="req">*</span></label>
+                                <input type="date" class="f-input" name="join_date" id="editJoinDate" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-lbl">Tanggal Berakhir Kontrak</label>
-                                <input type="date" class="form-ctrl" name="join_end_date" id="edit_joinenddate">
-                                <small style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block;">
-                                    <i class="fa-solid fa-circle-info"></i> Kosongkan jika karyawan tetap.
-                                </small>
+                                <label class="f-label">Contract End Date</label>
+                                <input type="date" class="f-input" name="join_end" id="editJoinEnd">
                             </div>
                         </div>
 
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
-                        <i class="fa-solid fa-xmark me-1"></i> Batal
-                    </button>
-                    <button type="button" class="btn-modal-submit amber" id="btnUpdateEmployee">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
-                    </button>
+
+                <div class="modal-footer" style="justify-content:space-between;">
+                    <span style="font-size:12px;color:var(--text-muted);">
+                        <i class="fa-solid fa-circle-info me-1"></i> Kolom bertanda <span style="color:#f05252;font-weight:700;">*</span> wajib diisi.
+                    </span>
+                    <div style="display:flex;gap:10px;">
+                        <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i> Batal
+                        </button>
+                        <button type="button" class="btn-modal-save" id="btnUpdateEmployee"
+                                style="background:linear-gradient(135deg,#f59e0b,#ef4444);box-shadow:0 4px 12px rgba(245,158,11,.35);">
+                            <i class="fa-solid fa-floppy-disk"></i> Update Karyawan
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
+    {{-- END MODAL EDIT --}}
+
+
+    {{-- ================================================================
+         MODAL: VIEW EMPLOYEE DETAIL
+    ================================================================ --}}
+    <div class="modal fade emp-modal" id="modalViewEmployee" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+
+                <div class="modal-header" style="background:linear-gradient(135deg,rgba(14,166,110,.08),var(--bg-card));">
+                    <h5 class="modal-title">
+                        <span class="modal-title-icon" style="background:linear-gradient(135deg,#0ea66e,#0284c7);">
+                            <i class="fa-solid fa-address-card"></i>
+                        </span>
+                        Employee Detail
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="modal-body">
+
+                    {{-- Employee Card Header --}}
+                    <div class="view-emp-header">
+                        <div class="view-emp-avatar" id="viewEmpAvatar" style="background:linear-gradient(135deg,#4f6ef7,#7c3aed);">
+                            AW
+                        </div>
+                        <div>
+                            <div class="view-emp-name" id="viewEmpName">—</div>
+                            <div class="view-emp-desig" id="viewEmpDesig">—</div>
+                            <div class="view-emp-tags">
+                                <span class="dept-badge" id="viewEmpDeptBadge">
+                                    <span class="dept-dot" id="viewDeptDot" style="background:#4f6ef7;"></span>
+                                    <span id="viewEmpDept">—</span>
+                                </span>
+                                <span class="gender-badge" id="viewEmpGenderBadge" style="font-size:11.5px;">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Detail Grid --}}
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-item-label"><i class="fa-solid fa-hashtag me-1"></i> NIK</div>
+                            <div class="detail-item-val mono" id="viewNik">—</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-item-label"><i class="fa-solid fa-phone me-1"></i> Phone No</div>
+                            <div class="detail-item-val mono" id="viewPhone">—</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-item-label"><i class="fa-solid fa-location-dot me-1"></i> Birth Place</div>
+                            <div class="detail-item-val" id="viewBirthPlace">—</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-item-label"><i class="fa-solid fa-cake-candles me-1"></i> Birth Date</div>
+                            <div class="detail-item-val" id="viewBirthDate">—</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-item-label"><i class="fa-solid fa-calendar-plus me-1"></i> Join Date</div>
+                            <div class="detail-item-val" id="viewJoinDate">—</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-item-label"><i class="fa-solid fa-calendar-xmark me-1"></i> Contract End</div>
+                            <div class="detail-item-val" id="viewJoinEnd">—</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-xmark"></i> Tutup
+                    </button>
+                    <button type="button" class="btn-modal-edit" id="btnViewToEdit">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Data
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {{-- END MODAL VIEW --}}
 
 @endsection
 
@@ -713,316 +595,319 @@
 <script>
 $(function () {
 
-    /* ==============================================================
-       HELPER — Format date "2024-01-15" → "15 Jan 2024"
-    ============================================================== */
-    var MONTHS = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-    function fmtDate(val) {
-        if (!val || val === '-') return '—';
-        var p = val.split('-');
-        if (p.length < 3) return val;
-        return parseInt(p[2]) + ' ' + MONTHS[parseInt(p[1]) - 1] + ' ' + p[0];
-    }
+    /* ================================================================
+       DEPARTMENT DATA
+       Ganti dengan data dari controller/AJAX di produksi.
+    ================================================================ */
+    var departments = [
+        { value: 'Engineering',      label: 'Engineering',      color: '#4f6ef7' },
+        { value: 'Finance',          label: 'Finance',          color: '#0ea66e' },
+        { value: 'Human Resources',  label: 'Human Resources',  color: '#f59e0b' },
+        { value: 'IT Infrastructure',label: 'IT Infrastructure',color: '#0284c7' },
+        { value: 'Legal',            label: 'Legal',            color: '#7c3aed' },
+        { value: 'Marketing',        label: 'Marketing',        color: '#db2777' },
+        { value: 'Operations',       label: 'Operations',       color: '#64748b' },
+        { value: 'Sales',            label: 'Sales',            color: '#ef4444' },
+        { value: 'Product',          label: 'Product',          color: '#8b5cf6' },
+        { value: 'Research & Dev',   label: 'Research & Dev',   color: '#06b6d4' },
+    ];
 
-    function escHtml(s) {
-        return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
 
+    /* ================================================================
+       SEARCHABLE DEPARTMENT DROPDOWN — factory function
+    ================================================================ */
+    function initDeptDropdown(opts) {
+        var $display  = $(opts.display);
+        var $menu     = $(opts.menu);
+        var $search   = $(opts.search);
+        var $list     = $(opts.list);
+        var $hidden   = $(opts.hidden);
+        var selected  = opts.initial || '';
 
-    /* ==============================================================
-       SEARCHABLE DROPDOWN — factory function
-       Reusable for both Add & Edit modal dept selectors
-    ============================================================== */
-    function initSearchableDropdown(opts) {
-        /*
-         * opts = {
-         *   triggerId      : '#addDeptTrigger',
-         *   dropdownId     : '#addDeptDropdown',
-         *   searchId       : '#addDeptSearch',
-         *   listId         : '#addDeptList',
-         *   labelId        : '#addDeptLabel',
-         *   realSelectId   : '#add_department',
-         *   wrapperId      : '#addDeptWrapper'
-         * }
-         */
-        var $trigger    = $(opts.triggerId);
-        var $dropdown   = $(opts.dropdownId);
-        var $search     = $(opts.searchId);
-        var $list       = $(opts.listId);
-        var $label      = $(opts.labelId);
-        var $real       = $(opts.realSelectId);
-        var selectedVal = '';
+        function renderOptions(filter) {
+            $list.empty();
+            var filtered = filter
+                ? departments.filter(function(d) {
+                    return d.label.toLowerCase().includes(filter.toLowerCase());
+                  })
+                : departments;
 
-        // Toggle open/close
-        $trigger.on('click keydown', function (e) {
-            if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
-            e.preventDefault();
-            toggleDropdown();
-        });
-
-        function toggleDropdown() {
-            var isOpen = $dropdown.hasClass('open');
-            closeAllDropdowns();
-            if (!isOpen) {
-                $dropdown.addClass('open');
-                $trigger.addClass('open');
-                $search.val('').trigger('input').focus();
+            if (filtered.length === 0) {
+                $list.html('<div class="dept-no-result"><i class="fa-solid fa-circle-info me-1"></i>Tidak ditemukan</div>');
+                return;
             }
+
+            filtered.forEach(function(d) {
+                var isSelected = (d.value === selected);
+                $list.append(
+                    '<div class="dept-option' + (isSelected ? ' selected' : '') + '" data-value="' + d.value + '">' +
+                    '<span class="dept-color-dot" style="background:' + d.color + ';"></span>' +
+                    d.label +
+                    '<i class="fa-solid fa-check check-icon"></i>' +
+                    '</div>'
+                );
+            });
         }
 
-        // Close when clicking outside
-        $(document).on('click', function (e) {
-            if (!$(opts.wrapperId).is(e.target) && $(opts.wrapperId).has(e.target).length === 0) {
-                $dropdown.removeClass('open');
-                $trigger.removeClass('open');
-            }
+        function setSelected(val, label) {
+            selected = val;
+            $hidden.val(val);
+            $display.html(
+                '<span class="dd-label">' + label + '</span>' +
+                '<i class="fa-solid fa-chevron-down dd-arrow"></i>'
+            );
+            if ($display.hasClass('open')) closeMenu();
+        }
+
+        function openMenu() {
+            $display.addClass('open');
+            $menu.addClass('open');
+            $search.val('').trigger('input').focus();
+        }
+
+        function closeMenu() {
+            $display.removeClass('open');
+            $menu.removeClass('open');
+        }
+
+        // Initial render
+        renderOptions('');
+        if (selected) {
+            var initDept = departments.find(function(d){ return d.value === selected; });
+            if (initDept) setSelected(initDept.value, initDept.label);
+        }
+
+        // Toggle open
+        $display.on('click', function(e) {
+            e.stopPropagation();
+            $display.hasClass('open') ? closeMenu() : openMenu();
         });
 
-        // Search / filter list items
-        $search.on('input', function () {
-            var q = $(this).val().toLowerCase().trim();
-            var any = false;
-            $list.find('.dd-item').each(function () {
-                var match = $(this).text().toLowerCase().includes(q);
-                $(this).toggle(match);
-                if (match) any = true;
-            });
-            $list.find('.dd-empty').remove();
-            if (!any) $list.append('<div class="dd-empty">Tidak ditemukan.</div>');
+        // Live search
+        $search.on('input', function() {
+            renderOptions($(this).val().trim());
         });
 
-        // Select item
-        $list.on('click', '.dd-item', function () {
-            var val   = $(this).data('val');
-            var lbl   = $(this).data('label');
-            selectedVal = val;
-
-            // Update visuals
-            $list.find('.dd-item').removeClass('selected');
-            $(this).addClass('selected');
-
-            // Update trigger label
-            $label.text(lbl).removeClass('placeholder');
-
-            // Update real hidden select
-            $real.val(val);
-
-            // Close dropdown
-            $dropdown.removeClass('open');
-            $trigger.removeClass('open');
+        // Select option
+        $list.on('click', '.dept-option', function() {
+            var val = $(this).data('value');
+            setSelected(val, val);
         });
 
-        // Public: pre-select a value (for edit modal)
+        // Close on outside click
+        $(document).on('click.deptdd' + opts.id, function() { closeMenu(); });
+
+        $menu.on('click', function(e) { e.stopPropagation(); });
+
+        // Expose method to set value programmatically
         return {
-            setValue: function (val, lbl) {
-                selectedVal = val;
-                $list.find('.dd-item').removeClass('selected');
-                $list.find('.dd-item[data-val="' + val + '"]').addClass('selected');
-                if (lbl) {
-                    $label.text(lbl).removeClass('placeholder');
-                } else {
-                    var autoLbl = $list.find('.dd-item[data-val="' + val + '"]').data('label') || val;
-                    $label.text(autoLbl).removeClass('placeholder');
-                }
-                $real.val(val);
+            setValue: function(val) {
+                var d = departments.find(function(d){ return d.value === val; });
+                if (d) setSelected(d.value, d.label);
+                else { selected=''; $hidden.val(''); $display.html('<span class="dd-label dd-placeholder">Pilih Departemen…</span><i class="fa-solid fa-chevron-down dd-arrow"></i>'); }
             },
-            reset: function () {
-                selectedVal = '';
-                $list.find('.dd-item').removeClass('selected');
-                $label.text('Pilih departemen…').addClass('placeholder');
-                $real.val('');
-            },
-            getVal: function () { return selectedVal; }
+            reset: function() { this.setValue(''); renderOptions(''); }
         };
     }
 
-    function closeAllDropdowns() {
-        $('.searchable-dropdown').removeClass('open');
-        $('.searchable-trigger').removeClass('open');
-    }
-
-    // Initialise both dropdowns
-    var addDeptDD  = initSearchableDropdown({
-        triggerId:   '#addDeptTrigger',
-        dropdownId:  '#addDeptDropdown',
-        searchId:    '#addDeptSearch',
-        listId:      '#addDeptList',
-        labelId:     '#addDeptLabel',
-        realSelectId:'#add_department',
-        wrapperId:   '#addDeptWrapper'
-    });
-
-    var editDeptDD = initSearchableDropdown({
-        triggerId:   '#editDeptTrigger',
-        dropdownId:  '#editDeptDropdown',
-        searchId:    '#editDeptSearch',
-        listId:      '#editDeptList',
-        labelId:     '#editDeptLabel',
-        realSelectId:'#edit_department',
-        wrapperId:   '#editDeptWrapper'
-    });
+    // Init both dropdowns
+    var addDeptDD  = initDeptDropdown({ id:'add',  display:'#addDeptDisplay',  menu:'#addDeptMenu',  search:'#addDeptSearch',  list:'#addDeptList',  hidden:'#addDeptHidden' });
+    var editDeptDD = initDeptDropdown({ id:'edit', display:'#editDeptDisplay', menu:'#editDeptMenu', search:'#editDeptSearch', list:'#editDeptList', hidden:'#editDeptHidden' });
 
 
-    /* ==============================================================
-       FILTER TABLE (client-side simulation)
-    ============================================================== */
-    $('#checkAll').on('change', function () {
-        $('.row-check:visible').prop('checked', $(this).is(':checked'));
-    });
+    /* ================================================================
+       FILTER & SEARCH
+    ================================================================ */
+    function applyFilters() {
+        var dept    = $('#filterDept').val().toLowerCase();
+        var keyword = $('#searchEmp').val().trim().toLowerCase();
+        var visible = 0;
 
-    function applyFilter() {
-        var dept    = $('#filterDept').val();
-        var gender  = $('#filterGender').val();
-        var keyword = $('#searchEmployee').val().trim().toLowerCase();
+        $('#empTbody tr').each(function() {
+            var name  = $(this).find('.emp-name').text().toLowerCase();
+            var nik   = $(this).find('.nik-badge').text().toLowerCase();
+            var dText = $(this).find('.dept-badge').text().trim().toLowerCase();
+            var gText = $(this).find('.gender-badge').text().trim().toLowerCase();
 
-        $('#employeeTbody tr').each(function () {
-            var rowDept   = $(this).data('dept')   || '';
-            var rowGender = $(this).data('gender') || '';
-            var rowText   = $(this).text().toLowerCase();
+            var mDept   = !dept    || dText.includes(dept);
+            var mKw     = !keyword || name.includes(keyword) || nik.includes(keyword);
 
-            var matchDept   = !dept   || rowDept === dept;
-            var matchGender = !gender || rowGender === gender;
-            var matchKw     = !keyword || rowText.includes(keyword);
-
-            $(this).toggle(matchDept && matchGender && matchKw);
+            var show = mDept && mKw;
+            $(this).toggle(show);
+            if (show) visible++;
         });
+
+        $('#showFrom').text(visible ? 1 : 0);
+        $('#showTo').text(visible);
+        $('#showTotal').text(visible);
+        $('#rowCountPill').text(visible + ' records');
     }
 
-    $('#btnApplyFilter').on('click', applyFilter);
-    $('#searchEmployee').on('keyup', applyFilter);
+    $('#btnApplyFilter').on('click', applyFilters);
+    $('#searchEmp').on('keyup', applyFilters);
+    $('#filterDept').on('change', applyFilters);
 
-    $('#btnResetFilter').on('click', function () {
+    $('#btnResetFilter').on('click', function() {
         $('#filterDept').val('');
-        $('#filterGender').val('');
-        $('#searchEmployee').val('');
-        $('#employeeTbody tr').show();
+        $('#searchEmp').val('');
+        $('#empTbody tr').show();
+        $('#showFrom').text(1);
+        $('#showTo').text(7);
+        $('#showTotal').text(7);
+        $('#rowCountPill').text('2,418 records');
     });
 
-    // Reset add modal on close
-    $('#modalAddEmployee').on('hidden.bs.modal', function () {
-        $('#formAddEmployee')[0].reset();
-        addDeptDD.reset();
-        $('.form-ctrl').removeClass('is-invalid');
+    // Check-all
+    $('#checkAll').on('change', function() {
+        $('.row-check').prop('checked', $(this).is(':checked'));
+    });
+
+    // Sortable columns
+    var sortState = {};
+    $('.emp-table thead th.sortable').on('click', function() {
+        var col = $(this).data('col');
+        var asc = sortState[col] !== 'asc';
+        sortState[col] = asc ? 'asc' : 'desc';
+        $('.emp-table thead th').removeClass('sort-asc sort-desc')
+            .find('.sort-icon').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+        $(this).addClass(asc ? 'sort-asc' : 'sort-desc')
+               .find('.sort-icon').removeClass('fa-sort').addClass(asc ? 'fa-sort-up' : 'fa-sort-down');
     });
 
 
-    /* ==============================================================
+    /* ================================================================
        VIEW MODAL — populate from data-* attributes
-    ============================================================== */
-    var _currentViewData = {};
+    ================================================================ */
+    var currentViewRow = null;
 
-    $(document).on('click', '.btn-action.view', function () {
-        var d = $(this).data();
-        _currentViewData = d;
+    $(document).on('click', '[data-action="view"]', function() {
+        var $row = $(this).closest('tr');
+        currentViewRow = $row;
 
-        $('#viewName').text(d.name || '—');
-        $('#viewDesig').text(d.desig || '—');
-        $('#viewDept').text(d.dept || '—');
-        $('#viewNik').text(d.nik || '—');
-        $('#viewGender').text(d.gender || '—');
-        $('#viewBirthPlace').text(d.birthPlace || d['birth-place'] || '—');
-        $('#viewBirthDate').text(fmtDate(d.birthDate || d['birth-date'] || ''));
-        $('#viewPhone').text(d.phone || '—');
-        $('#viewJoin').text(fmtDate(d.join || ''));
-        $('#viewJoinEnd').text(d.joinEnd === '-' || !d.joinEnd ? 'Karyawan Tetap (tidak terbatas)' : fmtDate(d.joinEnd));
+        var name       = $row.data('name');
+        var nik        = $row.data('nik');
+        var dept       = $row.data('dept');
+        var desig      = $row.data('desig');
+        var gender     = $row.data('gender');
+        var phone      = $row.data('phone');
+        var joinDate   = $row.data('join');
+        var joinEnd    = $row.data('join-end');
+        var birthPlace = $row.data('birth-place');
+        var birthDate  = $row.data('birth-date');
+        var grad       = $row.data('grad');
+        var initials   = $row.data('initials');
+        var deptColor  = $row.data('dept-color');
 
-        // Avatar
-        $('#viewAvatar')
-            .text(d.initials || (d.name || '??').substring(0,2).toUpperCase())
-            .css('background', d.color || 'linear-gradient(135deg,#4f6ef7,#7c3aed)');
+        // Populate modal
+        $('#viewEmpAvatar').html(initials).attr('style', 'background:' + grad + ';');
+        $('#viewEmpName').text(name);
+        $('#viewEmpDesig').text(desig);
+        $('#viewEmpDept').text(dept);
+        $('#viewDeptDot').css('background', deptColor);
+        $('#viewNik').text(nik);
+        $('#viewPhone').text(phone || '—');
+        $('#viewBirthPlace').text(birthPlace || '—');
+        $('#viewBirthDate').text(birthDate ? formatDate(birthDate) : '—');
+        $('#viewJoinDate').text(joinDate ? formatDate(joinDate) : '—');
+        $('#viewJoinEnd').text(joinEnd ? formatDate(joinEnd) : 'Permanent');
 
-        var modal = new bootstrap.Modal(document.getElementById('modalViewEmployee'));
-        modal.show();
+        if (gender === 'Male') {
+            $('#viewEmpGenderBadge')
+                .attr('class', 'gender-badge gender-m')
+                .html('<i class="fa-solid fa-mars" style="font-size:11px;"></i> Male');
+        } else {
+            $('#viewEmpGenderBadge')
+                .attr('class', 'gender-badge gender-f')
+                .html('<i class="fa-solid fa-venus" style="font-size:11px;"></i> Female');
+        }
+
+        var viewModal = new bootstrap.Modal(document.getElementById('modalViewEmployee'));
+        viewModal.show();
     });
 
-    // "Edit Data Ini" from view modal
-    $('#btnViewToEdit').on('click', function () {
+    // "Edit Data" button inside view modal
+    $('#btnViewToEdit').on('click', function() {
         bootstrap.Modal.getInstance(document.getElementById('modalViewEmployee')).hide();
-        setTimeout(function () {
-            // Trigger the edit button for the same record by constructing a proxy
-            var d = _currentViewData;
-            populateEditModal({
-                id: d.id, name: d.name, nik: d.nik,
-                deptVal: d.deptVal || d['dept-val'] || '',
-                deptLabel: d.dept,
-                desig: d.desig, gender: d.gender,
-                birthPlace: d.birthPlace || d['birth-place'] || '',
-                birthDate: d.birthDate || d['birth-date'] || '',
-                phone: d.phone, join: d.join, joinEnd: d.joinEnd === '-' ? '' : (d.joinEnd || '')
-            });
-            var editModal = new bootstrap.Modal(document.getElementById('modalEditEmployee'));
-            editModal.show();
-        }, 350);
+        if (currentViewRow) {
+            setTimeout(function() {
+                currentViewRow.find('[data-action="edit"]').trigger('click');
+            }, 300);
+        }
     });
 
 
-    /* ==============================================================
-       EDIT MODAL — populate from data-* attributes
-    ============================================================== */
-    function populateEditModal(d) {
-        $('#edit_id').val(d.id || '');
-        $('#edit_nik').val(d.nik || '');
-        $('#edit_fullname').val(d.name || '');
-        $('#edit_designation').val(d.desig || '');
-        $('#edit_gender').val(d.gender || '');
-        $('#edit_birthplace').val(d.birthPlace || '');
-        $('#edit_birthdate').val(d.birthDate || '');
-        $('#edit_phone').val(d.phone || '');
-        $('#edit_joindate').val(d.join || '');
-        $('#edit_joinenddate').val(d.joinEnd || '');
-        editDeptDD.setValue(d.deptVal || '', d.deptLabel || '');
-    }
+    /* ================================================================
+       EDIT MODAL — populate fields from row data
+    ================================================================ */
+    $(document).on('click', '[data-action="edit"]', function() {
+        var $row = $(this).closest('tr');
 
-    $(document).on('click', '.btn-action.edit', function () {
-        var d = $(this).data();
-        populateEditModal({
-            id: d.id, name: d.name, nik: d.nik,
-            deptVal: d.deptVal || d['dept-val'] || '',
-            deptLabel: d.deptLabel || d['dept-label'] || '',
-            desig: d.desig, gender: d.gender,
-            birthPlace: d.birthPlace || d['birth-place'] || '',
-            birthDate: d.birthDate || d['birth-date'] || '',
-            phone: d.phone, join: d.join,
-            joinEnd: d.joinEnd || d['join-end'] || ''
-        });
-        var modal = new bootstrap.Modal(document.getElementById('modalEditEmployee'));
-        modal.show();
+        var id         = $row.data('id');
+        var nik        = $row.data('nik');
+        var name       = $row.data('name');
+        var dept       = $row.data('dept');
+        var desig      = $row.data('desig');
+        var gender     = $row.data('gender');
+        var phone      = $row.data('phone');
+        var joinDate   = $row.data('join');
+        var joinEnd    = $row.data('join-end');
+        var birthPlace = $row.data('birth-place');
+        var birthDate  = $row.data('birth-date');
+
+        // Populate form
+        $('#editEmpId').val(id);
+        $('#editNik').val(nik);
+        $('#editFullName').val(name);
+        $('#editDesignation').val(desig);
+        $('#editGender').val(gender);
+        $('#editPhone').val(phone);
+        $('#editBirthPlace').val(birthPlace);
+        $('#editBirthDate').val(birthDate);
+        $('#editJoinDate').val(joinDate);
+        $('#editJoinEnd').val(joinEnd || '');
+        $('#editModalNikLabel').text('— ' + nik);
+
+        // Set searchable dept dropdown
+        editDeptDD.setValue(dept);
+
+        var editModal = new bootstrap.Modal(document.getElementById('modalEditEmployee'));
+        editModal.show();
     });
 
-    // Reset edit modal on close
-    $('#modalEditEmployee').on('hidden.bs.modal', function () {
-        $('#formEditEmployee')[0].reset();
-        editDeptDD.reset();
-        $('.form-ctrl').removeClass('is-invalid');
-    });
 
-
-    /* ==============================================================
-       FORM VALIDATION — generic
-    ============================================================== */
-    function validateForm($form) {
+    /* ================================================================
+       FORM VALIDATION HELPER
+    ================================================================ */
+    function validateForm(formSelector, deptHiddenId) {
         var valid = true;
-        $form.find('[required]').each(function () {
+        $(formSelector + ' .f-input[required], ' + formSelector + ' .f-select[required]').each(function() {
             $(this).removeClass('is-invalid');
             if (!$.trim($(this).val())) {
                 $(this).addClass('is-invalid');
                 valid = false;
             }
         });
+        // Validate dept dropdown
+        var deptVal = $(deptHiddenId).val();
+        if (!deptVal) {
+            $(formSelector).find('.dept-dropdown-display').css('border-color','#f05252');
+            valid = false;
+        } else {
+            $(formSelector).find('.dept-dropdown-display').css('border-color','');
+        }
         return valid;
     }
 
 
-    /* ==============================================================
+    /* ================================================================
        SAVE NEW EMPLOYEE
-    ============================================================== */
-    $('#btnSaveEmployee').on('click', function () {
-        var $form = $('#formAddEmployee');
-        if (!validateForm($form)) {
+    ================================================================ */
+    $('#btnSaveEmployee').on('click', function() {
+        if (!validateForm('#formAddEmployee', '#addDeptHidden')) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Form Belum Lengkap',
-                text: 'Harap isi semua field yang wajib diisi (ditandai *).',
+                text: 'Harap mengisi semua kolom yang wajib diisi.',
                 confirmButtonColor: '#4f6ef7'
             });
             return;
@@ -1030,172 +915,172 @@ $(function () {
 
         Swal.fire({
             title: 'Menyimpan Data…',
-            text: 'Karyawan baru sedang ditambahkan ke database.',
+            html: 'Sedang menyimpan data karyawan baru.',
             allowOutsideClick: false,
-            didOpen: function () { Swal.showLoading(); }
+            didOpen: function() { Swal.showLoading(); }
         });
+
         @php
         /*
-         * Ganti simulasi ini dengan AJAX ke route Anda:
+         * Ganti setTimeout dengan AJAX POST ke route Anda:
          * $.ajax({
-         *   url: '{{ route("employees.store") }}',
-         *   method: 'POST',
-         *   data: $form.serialize(),
-         *   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-         *   success: function(r) { ... },
-         *   error: function(e) { ... }
+         *     url: '{{ route("employees.store") }}',
+         *     method: 'POST',
+         *     data: $('#formAddEmployee').serialize(),
+         *     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+         *     success: ..., error: ...
          * });
          */ 
         @endphp
-        setTimeout(function () {
-            bootstrap.Modal.getInstance(document.getElementById('modalAddEmployee')).hide();
+        setTimeout(function() {
             Swal.fire({
                 icon: 'success',
-                title: 'Karyawan Berhasil Ditambahkan!',
-                html: 'Data karyawan <strong>' + escHtml($('#add_fullname').val()) + '</strong> telah disimpan.',
+                title: 'Berhasil Ditambahkan!',
+                html: 'Karyawan <strong>' + $('#addFullName').val() + '</strong> berhasil disimpan.',
                 confirmButtonColor: '#4f6ef7',
-                confirmButtonText: 'Oke'
+                confirmButtonText: 'OK'
+            }).then(function() {
+                bootstrap.Modal.getInstance(document.getElementById('modalAddEmployee')).hide();
+                $('#formAddEmployee')[0].reset();
+                addDeptDD.reset();
             });
-        }, 1800);
+        }, 1500);
+    });
+
+    // Reset form when Add modal closes
+    document.getElementById('modalAddEmployee').addEventListener('hidden.bs.modal', function() {
+        $('#formAddEmployee')[0].reset();
+        $('#formAddEmployee .f-input, #formAddEmployee .f-select').removeClass('is-invalid');
+        $('#formAddEmployee .dept-dropdown-display').css('border-color','');
+        addDeptDD.reset();
     });
 
 
-    /* ==============================================================
+    /* ================================================================
        UPDATE EMPLOYEE
-    ============================================================== */
-    $('#btnUpdateEmployee').on('click', function () {
-        var $form = $('#formEditEmployee');
-        if (!validateForm($form)) {
+    ================================================================ */
+    $('#btnUpdateEmployee').on('click', function() {
+        if (!validateForm('#formEditEmployee', '#editDeptHidden')) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Form Belum Lengkap',
-                text: 'Harap isi semua field yang wajib diisi (ditandai *).',
+                text: 'Harap mengisi semua kolom yang wajib diisi.',
                 confirmButtonColor: '#4f6ef7'
             });
             return;
         }
 
         Swal.fire({
-            title: 'Menyimpan Perubahan…',
+            title: 'Memperbarui Data…',
+            html: 'Sedang menyimpan perubahan.',
             allowOutsideClick: false,
-            didOpen: function () { Swal.showLoading(); }
+            didOpen: function() { Swal.showLoading(); }
         });
 
         /*
-         * AJAX PUT/PATCH ke route Anda:
-         * $.ajax({
-         *   url: '/employees/' + $('#edit_id').val(),
-         *   method: 'POST', // Laravel: _method=PUT via @method('PUT')
-         *   data: $form.serialize(),
-         *   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-         *   success: function(r) { ... }
-         * });
+         * AJAX PUT ke: {{ url('/employees') }}/<id>
          */
-        setTimeout(function () {
-            bootstrap.Modal.getInstance(document.getElementById('modalEditEmployee')).hide();
+        setTimeout(function() {
             Swal.fire({
                 icon: 'success',
-                title: 'Data Berhasil Diperbarui!',
-                html: 'Perubahan data <strong>' + escHtml($('#edit_fullname').val()) + '</strong> telah disimpan.',
+                title: 'Data Diperbarui!',
+                html: 'Karyawan <strong>' + $('#editFullName').val() + '</strong> berhasil diupdate.',
                 confirmButtonColor: '#4f6ef7'
+            }).then(function() {
+                bootstrap.Modal.getInstance(document.getElementById('modalEditEmployee')).hide();
             });
-        }, 1600);
+        }, 1400);
     });
 
 
-    /* ==============================================================
-       DELETE CONFIRMATION — SweetAlert2
-    ============================================================== */
-    $(document).on('click', '.btn-action.delete', function () {
-        var id   = $(this).data('id');
-        var name = $(this).data('name');
-        var nik  = $(this).data('nik');
-        var $row = $(this).closest('tr');
+    /* ================================================================
+       DELETE — SweetAlert2 konfirmasi dua tahap
+    ================================================================ */
+    $(document).on('click', '[data-action="delete"]', function() {
+        var $btn = $(this);
+        var name  = $btn.data('name');
+        var nik   = $btn.data('nik');
+        var id    = $btn.data('row-id');
 
+        // Step 1 — Konfirmasi awal
         Swal.fire({
             icon: 'warning',
             title: 'Hapus Karyawan?',
             html:
-                '<div style="text-align:left;padding:8px 0;">' +
-                '<p style="margin-bottom:10px;">Anda akan menghapus data berikut secara permanen:</p>' +
-                '<div style="background:var(--bg-body);border:1px solid var(--border-color);border-radius:10px;padding:12px 16px;font-size:13.5px;">' +
-                '<div style="margin-bottom:6px;"><strong style="color:var(--text-primary);">' + escHtml(name) + '</strong></div>' +
-                '<div style="font-size:12px;color:var(--text-muted);font-family:monospace;">' + escHtml(nik) + '</div>' +
-                '</div>' +
-                '<p style="margin-top:12px;font-size:12.5px;color:#f05252;"><i class="fa-solid fa-triangle-exclamation me-1"></i>Tindakan ini <strong>tidak dapat dibatalkan</strong>.</p>' +
-                '</div>',
+                'Anda akan menghapus data:<br>' +
+                '<strong style="font-size:15px;">' + name + '</strong><br>' +
+                '<span style="font-family:monospace;font-size:12px;color:#888;">' + nik + '</span>' +
+                '<br><br>' +
+                '<span style="font-size:13px;color:#e53e3e;">Tindakan ini <u>tidak dapat dibatalkan</u>.</span>',
             showCancelButton: true,
             confirmButtonColor: '#f05252',
-            cancelButtonColor:  '#6b7280',
-            confirmButtonText:  '<i class="fa-solid fa-trash-can me-1"></i> Ya, Hapus',
-            cancelButtonText:   'Batal',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: '<i class="fa-solid fa-trash-can me-1"></i> Ya, Hapus',
+            cancelButtonText: '<i class="fa-solid fa-xmark me-1"></i> Batal',
             reverseButtons: true,
             focusCancel: true,
-            customClass: {
-                confirmButton: 'swal-btn-danger',
-                popup: 'swal2-popup'
-            }
-        }).then(function (result) {
+        }).then(function(result) {
             if (!result.isConfirmed) return;
 
-            // Loading state
+            // Step 2 — Loading & simulasi request
             Swal.fire({
                 title: 'Menghapus Data…',
+                html: 'Sedang memproses penghapusan <strong>' + name + '</strong>.',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
-                didOpen: function () { Swal.showLoading(); }
+                didOpen: function() { Swal.showLoading(); }
             });
 
             /*
-             * AJAX DELETE ke route Anda:
+             * AJAX DELETE ke: {{ url('/employees') }}/<id>
+             *
              * $.ajax({
-             *   url: '/employees/' + id,
-             *   method: 'POST',
-             *   data: { _method: 'DELETE', _token: $('meta[name="csrf-token"]').attr('content') },
-             *   success: function() {
-             *     $row.fadeOut(300, function(){ $(this).remove(); });
-             *     Swal.fire({ icon:'success', title:'Dihapus!', ... });
-             *   }
+             *     url: '{{ url("/employees") }}/' + id,
+             *     method: 'DELETE',
+             *     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+             *     success: function() { ... },
+             *     error: function() { ... }
              * });
              */
-            setTimeout(function () {
-                // Animasi hapus baris dari tabel
-                $row.css({ transition: 'opacity .3s, transform .3s', opacity: '0', transform: 'translateX(20px)' });
-                setTimeout(function () { $row.remove(); }, 320);
+            setTimeout(function() {
+                // Hapus row dari tabel (demo)
+                var $row = $('[data-action="delete"][data-row-id="' + id + '"]').closest('tr');
 
                 Swal.fire({
                     icon: 'success',
-                    title: 'Data Berhasil Dihapus',
-                    html: 'Karyawan <strong>' + escHtml(name) + '</strong> telah dihapus dari sistem.',
+                    title: 'Berhasil Dihapus',
+                    html: 'Data karyawan <strong>' + name + '</strong> telah dihapus dari sistem.',
                     confirmButtonColor: '#4f6ef7',
-                    timer: 3000,
-                    timerProgressBar: true
+                    timer: 2800,
+                    timerProgressBar: true,
+                    showConfirmButton: false
                 });
-            }, 1400);
+
+                // Animate row removal
+                $row.css({ transition: 'opacity .35s ease, transform .35s ease', opacity: 0, transform: 'translateX(20px)' });
+                setTimeout(function() { $row.remove(); }, 380);
+
+            }, 1600);
         });
     });
 
 
-    /* ==============================================================
-       FLASH MESSAGES from Laravel session
-    ============================================================== */
-    @if(session('success'))
-        Swal.fire({
-            toast: true, position: 'top-end',
-            icon: 'success',
-            title: "{{ addslashes(session('success')) }}",
-            showConfirmButton: false,
-            timer: 3000, timerProgressBar: true
-        });
-    @endif
+    /* ================================================================
+       UTILITY — Format date YYYY-MM-DD → DD Month YYYY (ID)
+    ================================================================ */
+    function formatDate(dateStr) {
+        if (!dateStr) return '—';
+        var months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+        var parts = dateStr.split('-');
+        if (parts.length !== 3) return dateStr;
+        return parseInt(parts[2]) + ' ' + months[parseInt(parts[1]) - 1] + ' ' + parts[0];
+    }
 
-    @if(session('error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Terjadi Kesalahan',
-            text: "{{ addslashes(session('error')) }}",
-            confirmButtonColor: '#4f6ef7'
-        });
+    /* ================================================================
+       FLASH MESSAGE dari session (Blade directive)
+    ================================================================ */
+    @if(session('swal'))
+        Swal.fire(@json(session('swal')));
     @endif
 
 });
