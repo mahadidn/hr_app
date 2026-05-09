@@ -46,13 +46,15 @@
     </nav>
 
     {{-- Footer (Logout) --}}
+    
     <div class="sidebar-footer">
-        <a href="{{ url('/logout') }}"
-           class="nav-item-link"
-           id="btnLogout">
-            <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
-            <span>Logout</span>
-        </a>
+        <form action="{{ url('/logout') }}" method="POST" id="logout-form">
+            @csrf
+            <button type="button" class="nav-item-link" id="btnLogout" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer;">
+                <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                <span>Logout</span>
+            </button>
+        </form>
     </div>
 
 </aside>

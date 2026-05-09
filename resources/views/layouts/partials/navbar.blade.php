@@ -39,13 +39,12 @@
         <div class="navbar-divider d-none d-sm-block"></div>
 
         {{-- User --}}
-        <div class="navbar-user" title="HR Admin">
-            <div class="user-avatar">HA</div>
+        <div class="navbar-user" title="{{ Auth::user()->name }}">
+            <div class="user-avatar">HR</div>
             <div class="user-info">
-                <span class="user-name">HR Admin</span>
+                <span class="user-name">{{ Auth::user()->name }}</span>
                 <span class="user-role">Administrator</span>
             </div>
-            <i class="fa-solid fa-chevron-down" style="font-size:10px;color:var(--text-muted);margin-left:2px;"></i>
         </div>
 
     </div>

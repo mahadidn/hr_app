@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,33 +14,33 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// redirect to login
-Route::get('/', function () {
-    return redirect()->route('login');
+// Redirect Default
+Route::redirect('/', '/login');
+
+// ==========================================
+// GUEST AREA
+// ==========================================
+Route::middleware('guest')->group(function () {
+    Route::view('/login', 'auth.login')->name('login');
+    Route::post('/login', [AuthController::class, 'authenticate'])->name('login.submit');
 });
 
-// Login Page
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
 
-// Dashboard Page
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+// ==========================================
+// AUTHENTICATED AREA (Must Login)
+// ==========================================
+Route::middleware('auth')->group(function () {
 
-// Employee Page
-Route::get('/employees', function () {
-    return view('employees.index');
-})->name('employees');
+    // Auth Actions
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // Dashboard
+    Route::view('/dashboard', 'dashboard')->name('dashboard');
 
-// Department Page
-Route::get('/departments', function () {
-    return view('departments.index');
-})->name('departments');
+    // Master Data
+    Route::view('/employees', 'employees.index')->name('employees');
+    Route::view('/departments', 'departments.index')->name('departments');
 
-// attendance page
-Route::get('/attendance', function () {
-    return view('attendance.index');
-})->name('attendance');
+    // Transactions / Operations
+    Route::view('/attendance', 'attendance.index')->name('attendance');
+});

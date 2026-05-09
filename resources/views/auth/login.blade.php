@@ -84,7 +84,7 @@
             @endif
 
             {{-- =================== FORM =================== --}}
-            <form method="POST" action="{{ route('login') }}" id="loginForm" novalidate>
+            <form method="POST" action="{{ route('login.submit') }}" id="loginForm" novalidate>
                 @csrf
 
                 {{-- Email --}}

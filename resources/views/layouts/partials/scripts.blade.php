@@ -105,7 +105,6 @@
         ===================================================== */
         $('#btnLogout').on('click', function (e) {
             e.preventDefault();
-            const logoutUrl = $(this).attr('href');
 
             Swal.fire({
                 title: 'Log Out?',
@@ -123,8 +122,8 @@
                 }
             }).then(function (result) {
                 if (result.isConfirmed) {
-                    // CSRF-aware redirect (Use a POST form if necessary)
-                    window.location.href = logoutUrl;
+                    // manually submit, if user click on logout
+                    $('#logout-form').submit();
                 }
             });
         });
