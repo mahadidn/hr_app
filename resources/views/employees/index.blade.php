@@ -24,7 +24,7 @@
                 Master Data
             </div>
             <h1 class="emp-heading">Employee Management</h1>
-            <p class="emp-subheading">Kelola seluruh data karyawan aktif perusahaan.</p>
+            <p class="emp-subheading">Manage all data on the company's active employees.</p>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
             <button class="btn-primary-emp" id="btnAddEmployee"
@@ -381,7 +381,7 @@
                         @method('PUT')
                         <input type="hidden" id="editEmpId" name="id">
 
-                        <div class="form-section-title"><i class="fa-solid fa-id-card"></i> Data Identitas</div>
+                        <div class="form-section-title"><i class="fa-solid fa-id-card"></i> Identification Information</div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
@@ -399,7 +399,7 @@
                                 <label class="f-label">Department <span class="req">*</span></label>
                                 <div class="dept-dropdown-wrap" id="editDeptWrap">
                                     <div class="dept-dropdown-display" id="editDeptDisplay">
-                                        <span class="dd-label dd-placeholder">Pilih Departemen…</span>
+                                        <span class="dd-label dd-placeholder">Select a Department…</span>
                                         <i class="fa-solid fa-chevron-down dd-arrow"></i>
                                     </div>
                                     <div class="dept-dropdown-menu" id="editDeptMenu">
@@ -464,15 +464,15 @@
 
                 <div class="modal-footer" style="justify-content:space-between;">
                     <span style="font-size:12px;color:var(--text-muted);">
-                        <i class="fa-solid fa-circle-info me-1"></i> Kolom bertanda <span style="color:#f05252;font-weight:700;">*</span> wajib diisi.
+                        <i class="fa-solid fa-circle-info me-1"></i> Fields marked with an <span style="color:#f05252;font-weight:700;">*</span> are required.
                     </span>
                     <div style="display:flex;gap:10px;">
                         <button type="button" class="btn-modal-cancel" data-bs-dismiss="modal">
-                            <i class="fa-solid fa-xmark"></i> Batal
+                            <i class="fa-solid fa-xmark"></i> Cancel
                         </button>
                         <button type="button" class="btn-modal-save" id="btnUpdateEmployee"
                                 style="background:linear-gradient(135deg,#f59e0b,#ef4444);box-shadow:0 4px 12px rgba(245,158,11,.35);">
-                            <i class="fa-solid fa-floppy-disk"></i> Update Karyawan
+                            <i class="fa-solid fa-floppy-disk"></i> Update Employee
                         </button>
                     </div>
                 </div>
@@ -882,61 +882,60 @@ $(function () {
        SAVE NEW EMPLOYEE
     ================================================================ */
     $('#btnSaveEmployee').on('click', function() {
-        // 1. Validasi Front-end
+        // Front-end validation
         if (!validateForm('#formAddEmployee', '#addDeptHidden')) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Form Belum Lengkap',
-                text: 'Harap mengisi semua kolom yang wajib diisi.',
+                title: 'Form Not Complete',
+                text: 'Please fill in all required fields.',
                 confirmButtonColor: '#4f6ef7'
             });
             return;
         }
 
-        // 2. Munculkan Loading
+        // display the Loading
         Swal.fire({
-            title: 'Menyimpan Data…',
-            html: 'Sedang menyimpan data karyawan baru.',
+            title: 'Saving Data…',
+            html: 'Saving new employee data.',
             allowOutsideClick: false,
             didOpen: function() { Swal.showLoading(); }
         });
 
-        // 3. Kirim Data via AJAX
+        // Send the data via AJAX
         $.ajax({
-            url: $('#formAddEmployee').attr('action'), // Otomatis mengambil action dari tag <form>
+            url: $('#formAddEmployee').attr('action'), // Automatically trigger an action from the form tag
             method: 'POST',
-            data: $('#formAddEmployee').serialize(), // Otomatis membungkus semua input form
+            data: $('#formAddEmployee').serialize(), // Automatically wrap all form inputs
             success: function(response) {
-                // Jika berhasil disimpan di database
+                // If successfully saved to the database
                 Swal.fire({
                     icon: 'success',
-                    title: 'Berhasil Ditambahkan!',
-                    html: 'Karyawan <strong>' + $('#addFullName').val() + '</strong> berhasil disimpan.',
+                    title: 'Successfully Added!',
+                    html: '<strong>' + $('#addFullName').val() + "</strong>'s employee has been successfully saved.",
                     confirmButtonColor: '#4f6ef7',
                     confirmButtonText: 'OK'
                 }).then(function() {
-                    // Tutup Modal & Reset Form
+                    // Close & Reset Form
                     bootstrap.Modal.getInstance(document.getElementById('modalAddEmployee')).hide();
                     $('#formAddEmployee')[0].reset();
                     addDeptDD.reset();
                     
-                    // Refresh halaman untuk melihat data terbaru di tabel
+                    // Refresh the page to see the latest data in the table
                     window.location.reload(); 
                 });
             },
             error: function(xhr) {
-                // Jika gagal (misal NIK sudah terdaftar, terdeteksi oleh validasi Laravel)
-                var errorMsg = 'Terjadi kesalahan saat menyimpan data.';
+
+                var errorMsg = 'An error occurred while saving the data.';
                 
-                // Tangkap pesan error detail dari Laravel
+                // catch error message detail from laravel
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    // Ambil pesan error validasi pertama
                     errorMsg = Object.values(xhr.responseJSON.errors)[0][0]; 
                 }
 
                 Swal.fire({
                     icon: 'error',
-                    title: 'Gagal Menyimpan',
+                    title: 'Failed to Save',
                     text: errorMsg,
                     confirmButtonColor: '#f05252'
                 });
@@ -961,49 +960,46 @@ $(function () {
         if (!validateForm('#formEditEmployee', '#editDeptHidden')) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Form Belum Lengkap',
-                text: 'Harap mengisi semua kolom yang wajib diisi.',
+                title: 'Form Not Complete',
+                text: 'Please fill in all required fields.',
                 confirmButtonColor: '#4f6ef7'
             });
             return;
         }
 
-        // 2. Ambil ID Karyawan untuk menyusun URL dinamis
+        // Get the Employee ID to generate a dynamic URL
         var empId = $('#editEmpId').val();
         var targetUrl = '{{ url("/employees") }}/' + empId;
 
-        // 3. Munculkan Loading
+        // display Loading
         Swal.fire({
-            title: 'Memperbarui Data…',
-            html: 'Sedang menyimpan perubahan.',
+            title: 'Updating data…',
+            html: 'Saving changes.',
             allowOutsideClick: false,
             didOpen: function() { Swal.showLoading(); }
         });
 
-        // 4. Kirim request AJAX
+        // send request to AJAX
         $.ajax({
             url: targetUrl,
-            method: 'POST', // Tetap gunakan POST karena @method('PUT') otomatis terselip di .serialize()
+            method: 'POST', // Continue to use POST because @method('PUT') is automatically included in .serialize()
             data: $('#formEditEmployee').serialize(),
             success: function(response) {
-                // Jika berhasil
+                // if success
                 Swal.fire({
                     icon: 'success',
-                    title: 'Data Diperbarui!',
-                    html: 'Karyawan <strong>' + $('#editFullName').val() + '</strong> berhasil diupdate.',
+                    title: 'Data Updated!',
+                    html: '<strong>' + $('#editFullName').val() + "</strong>'s employee information has been successfully updated.",
                     confirmButtonColor: '#4f6ef7'
                 }).then(function() {
-                    // Tutup modal dan refresh halaman
                     bootstrap.Modal.getInstance(document.getElementById('modalEditEmployee')).hide();
                     window.location.reload(); 
                 });
             },
             error: function(xhr) {
-                // Jika gagal (misalnya NIK diubah tapi bentrok dengan NIK orang lain)
                 var errorMsg = 'Terjadi kesalahan saat memperbarui data.';
                 
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    // Mengambil pesan error pertama dari Laravel Validator
                     errorMsg = Object.values(xhr.responseJSON.errors)[0][0]; 
                 }
 
@@ -1019,10 +1015,7 @@ $(function () {
 
 
     /* ================================================================
-       DELETE — SweetAlert2 konfirmasi dua tahap
-    ================================================================ */
-    /* ================================================================
-   DELETE — SweetAlert2 konfirmasi dua tahap dengan AJAX
+       DELETE — SweetAlert2 Confirmation
     ================================================================ */
     $(document).on('click', '[data-action="delete"]', function() {
         var $btn = $(this);
@@ -1030,74 +1023,69 @@ $(function () {
         var nik   = $btn.data('nik');
         var id    = $btn.data('row-id');
 
-        // Step 1 — Konfirmasi awal
+        //  Confirmation
         Swal.fire({
             icon: 'warning',
-            title: 'Hapus Karyawan?',
+            title: 'Delete Employee?',
             html:
-                'Anda akan menghapus data:<br>' +
+                'You are about to delete this data:<br>' +
                 '<strong style="font-size:15px;">' + name + '</strong><br>' +
                 '<span style="font-family:monospace;font-size:12px;color:#888;">' + nik + '</span>' +
                 '<br><br>' +
-                '<span style="font-size:13px;color:#e53e3e;">Tindakan ini <u>tidak dapat dibatalkan</u>.</span>',
+                '<span style="font-size:13px;color:#e53e3e;"><u>This action cannot be undone and will also delete all attendance records for this employee</u>.</span>',
             showCancelButton: true,
             confirmButtonColor: '#f05252',
             cancelButtonColor: '#6b7280',
-            confirmButtonText: '<i class="fa-solid fa-trash-can me-1"></i> Ya, Hapus',
-            cancelButtonText: '<i class="fa-solid fa-xmark me-1"></i> Batal',
+            confirmButtonText: '<i class="fa-solid fa-trash-can me-1"></i> Yes',
+            cancelButtonText: '<i class="fa-solid fa-xmark me-1"></i> Cancel',
             reverseButtons: true,
             focusCancel: true,
         }).then(function(result) {
             if (!result.isConfirmed) return;
 
-            // Step 2 — Loading indicator
+            // Loading indicator
             Swal.fire({
-                title: 'Menghapus Data…',
-                html: 'Sedang memproses penghapusan <strong>' + name + '</strong>.',
+                title: 'Deleting data…',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 didOpen: function() { Swal.showLoading(); }
             });
 
-            // Step 3 — AJAX Request ke Backend Laravel
+            //  AJAX Request to the Laravel Backend
             $.ajax({
-                url: '{{ url("/employees") }}/' + id, // Menuju rute destroy di controller
+                url: '{{ url("/employees") }}/' + id, 
                 type: 'DELETE',
                 headers: {
-                    // Mengambil token dari tag meta di head HTML
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    // Ambil elemen baris (TR) yang akan dihapus
                     var $row = $('[data-action="delete"][data-row-id="' + id + '"]').closest('tr');
 
-                    // Tampilkan notifikasi sukses
                     Swal.fire({
                         icon: 'success',
-                        title: 'Berhasil Dihapus',
-                        html: 'Data karyawan <strong>' + name + '</strong> telah dihapus dari sistem.',
+                        title: 'Success Deleted',
+                        html: 'The employee data has been <strong>' + name + '</strong> successfully deleted from system.',
                         confirmButtonColor: '#4f6ef7',
-                        timer: 2800, // Otomatis hilang dalam 2.8 detik
+                        timer: 2800, 
                         timerProgressBar: true,
                         showConfirmButton: false
                     });
 
-                    // Jalankan animasi CSS untuk menghilangkan baris tanpa harus refresh halaman
                     $row.css({ transition: 'opacity .35s ease, transform .35s ease', opacity: 0, transform: 'translateX(20px)' });
                     setTimeout(function() { 
                         $row.remove(); 
                     }, 380);
                 },
                 error: function(xhr) {
-                    // Tangani jika terjadi error di server
-                    var errorMsg = 'Terjadi kesalahan saat menghapus data. Silakan coba lagi.';
+                    
+                    var errorMsg = 'An error occurred while deleting the data. Please try again.';
                     if(xhr.responseJSON && xhr.responseJSON.message) {
                         errorMsg = xhr.responseJSON.message;
                     }
 
                     Swal.fire({
                         icon: 'error',
-                        title: 'Gagal Menghapus',
+                        title: 'Failed to Delete',
                         text: errorMsg,
                         confirmButtonColor: '#f05252'
                     });
@@ -1119,7 +1107,7 @@ $(function () {
     }
 
     /* ================================================================
-       FLASH MESSAGE dari session (Blade directive)
+       FLASH MESSAGE from session (Blade directive)
     ================================================================ */
     @if(session('swal'))
         Swal.fire(@json(session('swal')));

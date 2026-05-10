@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
@@ -48,5 +49,6 @@ Route::middleware('auth')->group(function () {
         ->except(['create', 'show', 'edit']);
 
     // Transactions / Operations
-    Route::view('/attendance', 'attendance.index')->name('attendance');
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
+    Route::post('/attendance/import', [AttendanceController::class, 'import'])->name('attendance.import');
 });

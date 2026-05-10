@@ -27,9 +27,6 @@
             <p class="att-subheading">Pantau dan kelola kehadiran karyawan secara real-time.</p>
         </div>
         <div class="header-actions">
-            <button class="btn-header-action">
-                <i class="fa-solid fa-file-pdf"></i> Export PDF
-            </button>
             <button class="btn-header-action primary" id="btnGoImport">
                 <i class="fa-solid fa-file-import"></i> Import Excel
             </button>
@@ -70,17 +67,6 @@
                         <label class="filter-label"><i class="fa-solid fa-calendar-days me-1"></i> Tanggal Akhir</label>
                         <input type="date" class="filter-input" id="filterDateTo"
                                value="{{ date('Y-m-d') }}" style="min-width:155px;">
-                    </div>
-
-                    <div class="filter-group">
-                        <label class="filter-label"><i class="fa-solid fa-circle-dot me-1"></i> Status</label>
-                        <select class="filter-select" id="filterStatus">
-                            <option value="">Semua Status</option>
-                            <option value="present">Hadir</option>
-                            <option value="late">Terlambat</option>
-                            <option value="absent">Absen</option>
-                            <option value="leave">Cuti/Izin</option>
-                        </select>
                     </div>
 
                     <div class="filter-group" style="flex:1; min-width:200px;">
@@ -137,174 +123,55 @@
                             <th class="sortable" data-col="nik">
                                 NIK <i class="fa-solid fa-sort sort-icon"></i>
                             </th>
-                            <th class="sortable" data-col="date">
-                                Tanggal <i class="fa-solid fa-sort sort-icon"></i>
-                            </th>
                             <th class="sortable" data-col="timein">
                                 Time In <i class="fa-solid fa-sort sort-icon"></i>
                             </th>
                             <th class="sortable" data-col="timeout">
                                 Time Out <i class="fa-solid fa-sort sort-icon"></i>
                             </th>
-                            <th>Status</th>
-                            <th class="sortable" data-col="duration">
-                                Durasi <i class="fa-solid fa-sort sort-icon"></i>
-                            </th>
-                            <th style="text-align:center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="attendanceTbody">
-
-                        {{-- Row 1 --}}
-                        <tr>
-                            <td style="padding-left:20px;">
-                                <input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;">
-                            </td>
-                            <td>
-                                <div class="emp-cell">
-                                    <div class="emp-avatar" style="background:linear-gradient(135deg,#4f6ef7,#7c3aed);">AW</div>
-                                    <div>
-                                        <div class="emp-name">Ahmad Wijaya</div>
-                                        <div class="emp-dept">Engineering</div>
+                        @forelse($attendances as $att)
+                            @php
+                                // Buat inisial untuk avatar
+                                $words = explode(' ', $att->employee->full_name ?? 'N A');
+                                $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+                            @endphp
+                            <tr>
+                                <td style="padding-left:20px;">
+                                    <input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;">
+                                </td>
+                                <td>
+                                    <div class="emp-cell">
+                                        <div class="emp-avatar" style="background:linear-gradient(135deg,#4f6ef7,#7c3aed);">
+                                            {{ $initials }}
+                                        </div>
+                                        <div>
+                                            <div class="emp-name">{{ $att->employee->Full_name ?? 'Unknown' }}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td><span class="nik-mono">1001-ENG</span></td>
-                            <td style="font-size:13px;color:var(--text-secondary);">{{ date('d M Y') }}</td>
-                            <td><span class="time-val">08:01</span></td>
-                            <td><span class="time-val">17:05</span></td>
-                            <td>
-                                <span class="status-badge status-present">
-                                    <span class="badge-dot"></span> Hadir
-                                </span>
-                            </td>
-                            <td><span class="duration-val">9j 04m</span></td>
-                            <td style="text-align:center;">
-                                <button class="row-action" title="Detail"><i class="fa-solid fa-eye"></i></button>
-                                <button class="row-action" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                            </td>
-                        </tr>
-
-                        {{-- Row 2 --}}
-                        <tr>
-                            <td style="padding-left:20px;">
-                                <input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;">
-                            </td>
-                            <td>
-                                <div class="emp-cell">
-                                    <div class="emp-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">SR</div>
-                                    <div>
-                                        <div class="emp-name">Sari Rahayu</div>
-                                        <div class="emp-dept">Human Resources</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><span class="nik-mono">1045-HRD</span></td>
-                            <td style="font-size:13px;color:var(--text-secondary);">{{ date('d M Y') }}</td>
-                            <td><span class="time-val time-late">09:32</span></td>
-                            <td><span class="time-val">18:00</span></td>
-                            <td>
-                                <span class="status-badge status-late">
-                                    <span class="badge-dot"></span> Terlambat
-                                </span>
-                            </td>
-                            <td><span class="duration-val">8j 28m</span></td>
-                            <td style="text-align:center;">
-                                <button class="row-action" title="Detail"><i class="fa-solid fa-eye"></i></button>
-                                <button class="row-action" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                            </td>
-                        </tr>
-
-                        {{-- Row 3 --}}
-                        <tr>
-                            <td style="padding-left:20px;">
-                                <input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;">
-                            </td>
-                            <td>
-                                <div class="emp-cell">
-                                    <div class="emp-avatar" style="background:linear-gradient(135deg,#0ea66e,#0284c7);">BP</div>
-                                    <div>
-                                        <div class="emp-name">Budi Prasetyo</div>
-                                        <div class="emp-dept">Finance</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><span class="nik-mono">1012-FIN</span></td>
-                            <td style="font-size:13px;color:var(--text-secondary);">{{ date('d M Y') }}</td>
-                            <td><span class="time-val">&mdash;</span></td>
-                            <td><span class="time-val">&mdash;</span></td>
-                            <td>
-                                <span class="status-badge status-absent">
-                                    <span class="badge-dot"></span> Absen
-                                </span>
-                            </td>
-                            <td><span class="duration-val">&mdash;</span></td>
-                            <td style="text-align:center;">
-                                <button class="row-action" title="Detail"><i class="fa-solid fa-eye"></i></button>
-                                <button class="row-action" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                            </td>
-                        </tr>
-
-                        {{-- Row 4 --}}
-                        <tr>
-                            <td style="padding-left:20px;">
-                                <input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;">
-                            </td>
-                            <td>
-                                <div class="emp-cell">
-                                    <div class="emp-avatar" style="background:linear-gradient(135deg,#7c3aed,#db2777);">DN</div>
-                                    <div>
-                                        <div class="emp-name">Dewi Nuraini</div>
-                                        <div class="emp-dept">Marketing</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><span class="nik-mono">1088-MKT</span></td>
-                            <td style="font-size:13px;color:var(--text-secondary);">{{ date('d M Y') }}</td>
-                            <td><span class="time-val">&mdash;</span></td>
-                            <td><span class="time-val">&mdash;</span></td>
-                            <td>
-                                <span class="status-badge status-leave">
-                                    <span class="badge-dot"></span> Cuti
-                                </span>
-                            </td>
-                            <td><span class="duration-val">&mdash;</span></td>
-                            <td style="text-align:center;">
-                                <button class="row-action" title="Detail"><i class="fa-solid fa-eye"></i></button>
-                                <button class="row-action" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                            </td>
-                        </tr>
-
-                        {{-- Row 5 --}}
-                        <tr>
-                            <td style="padding-left:20px;">
-                                <input type="checkbox" class="row-check" style="accent-color:var(--accent);width:15px;height:15px;">
-                            </td>
-                            <td>
-                                <div class="emp-cell">
-                                    <div class="emp-avatar" style="background:linear-gradient(135deg,#0284c7,#0ea66e);">RF</div>
-                                    <div>
-                                        <div class="emp-name">Reza Firmansyah</div>
-                                        <div class="emp-dept">IT Infrastructure</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td><span class="nik-mono">1031-ITS</span></td>
-                            <td style="font-size:13px;color:var(--text-secondary);">{{ date('d M Y') }}</td>
-                            <td><span class="time-val">07:55</span></td>
-                            <td><span class="time-val">17:00</span></td>
-                            <td>
-                                <span class="status-badge status-present">
-                                    <span class="badge-dot"></span> Hadir
-                                </span>
-                            </td>
-                            <td><span class="duration-val">9j 05m</span></td>
-                            <td style="text-align:center;">
-                                <button class="row-action" title="Detail"><i class="fa-solid fa-eye"></i></button>
-                                <button class="row-action" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                            </td>
-                        </tr>
-
+                                </td>
+                                <td><span class="nik-mono">{{ $att->employee->NIK ?? '-' }}</span></td>
+                                <td>
+                                    <span class="time-val">
+                                        {{ $att->Time_in ? \Carbon\Carbon::parse($att->Time_in)->format('Y-m-d H:i') : '—' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="time-val">
+                                        {{ $att->Time_out ? \Carbon\Carbon::parse($att->Time_out)->format('Y-m-d H:i') : '—' }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 40px; color: #888;">
+                                    <i class="fa-solid fa-calendar-xmark" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                                    Tidak ada data kehadiran ditemukan.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -393,7 +260,7 @@
                         </div>
 
                         {{-- Download Template --}}
-                        <div class="template-row">
+                        {{-- <div class="template-row">
                             <div class="template-row-left">
                                 <div class="template-icon">
                                     <i class="fa-solid fa-file-excel"></i>
@@ -410,7 +277,7 @@
                                 <i class="fa-solid fa-arrow-down-to-line"></i>
                                 Download Template
                             </a>
-                        </div>
+                        </div> --}}
 
                     </div>
                 </div>
@@ -477,28 +344,13 @@
                                 <td><span class="req-pill">Wajib</span></td>
                             </tr>
                             <tr>
-                                <td>date</td>
-                                <td style="font-family:var(--font-main);">Format: YYYY-MM-DD</td>
-                                <td><span class="req-pill">Wajib</span></td>
-                            </tr>
-                            <tr>
                                 <td>time_in</td>
-                                <td style="font-family:var(--font-main);">Format: HH:MM</td>
+                                <td style="font-family:var(--font-main);">Format: YYYY-MM-DD HH:MM</td>
                                 <td><span class="req-pill">Wajib</span></td>
                             </tr>
                             <tr>
                                 <td>time_out</td>
-                                <td style="font-family:var(--font-main);">Format: HH:MM</td>
-                                <td><span class="opt-pill">Opsional</span></td>
-                            </tr>
-                            <tr>
-                                <td>status</td>
-                                <td style="font-family:var(--font-main);">present / late / absent / leave</td>
-                                <td><span class="opt-pill">Opsional</span></td>
-                            </tr>
-                            <tr>
-                                <td>notes</td>
-                                <td style="font-family:var(--font-main);">Keterangan tambahan</td>
+                                <td style="font-family:var(--font-main);">Format: YYYY-MM-DD HH:MM</td>
                                 <td><span class="opt-pill">Opsional</span></td>
                             </tr>
                         </tbody>
@@ -597,33 +449,22 @@ $(function () {
        2. FILTER BAR
     ============================================================== */
     $('#btnApplyFilter').on('click', function () {
-        var dateFrom = $('#filterDateFrom').val();
-        var dateTo   = $('#filterDateTo').val();
-        var status   = $('#filterStatus').val();
-        var keyword  = $('#searchEmployee').val().trim().toLowerCase();
+        var keyword = $('#searchEmployee').val().trim().toLowerCase();
 
         // Filter tabel (simulasi client-side — ganti dengan AJAX di produksi)
         $('#attendanceTbody tr').each(function () {
-            var name   = $(this).find('.emp-name').text().toLowerCase();
-            var nik    = $(this).find('.nik-mono').text().toLowerCase();
-            var rowSt  = $(this).find('.status-badge').text().trim().toLowerCase();
+            var name = $(this).find('.emp-name').text().toLowerCase();
+            var nik  = $(this).find('.nik-mono').text().toLowerCase();
 
             var matchKw = !keyword || name.includes(keyword) || nik.includes(keyword);
-            var matchSt = !status  || rowSt.includes(statusMap(status));
 
-            $(this).toggle(matchKw && matchSt);
+            $(this).toggle(matchKw);
         });
     });
-
-    function statusMap(val) {
-        var map = { present:'hadir', late:'terlambat', absent:'absen', leave:'cuti' };
-        return map[val] || '';
-    }
 
     $('#btnResetFilter').on('click', function () {
         $('#filterDateFrom').val('{{ date("Y-m-01") }}');
         $('#filterDateTo').val('{{ date("Y-m-d") }}');
-        $('#filterStatus').val('');
         $('#searchEmployee').val('');
         $('#attendanceTbody tr').show();
     });
@@ -730,7 +571,7 @@ $(function () {
         reader.onload = function (e) {
             try {
                 var data     = new Uint8Array(e.target.result);
-                var workbook = XLSX.read(data, { type: 'array', cellDates: true, dateNF: 'yyyy-mm-dd' });
+                var workbook = XLSX.read(data, { type: 'array', cellDates: true, dateNF: 'yyyy-mm-dd hh:mm' });
                 var sheetName = workbook.SheetNames[0];
                 var sheet    = workbook.Sheets[sheetName];
                 var json     = XLSX.utils.sheet_to_json(sheet, { defval: '' });
@@ -923,47 +764,34 @@ $(function () {
                 }
             });
 
-            
-            @php
-             /*
-             * Di sini normalnya Anda melakukan AJAX POST ke backend:
-             *
-             * $.ajax({
-             *     url: '{{ route("attendance.import") }}',
-             *     method: 'POST',
-             *     data: JSON.stringify({ records: json }),
-             *     contentType: 'application/json',
-             *     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-             *     success: function(res) { ... },
-             *     error: function(err) { ... }
-             * });
-             *
-             * Di bawah ini adalah simulasi delay untuk demo:
-             */
-            @endphp
-            setTimeout(function () {
-
-                // --- SUCCESS ---
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Import Berhasil!',
-                    html: '<strong>' + json.length + ' record</strong> kehadiran berhasil disimpan ke database.',
-                    confirmButtonColor: '#0ea66e',
-                    confirmButtonText: 'Lihat Data',
-                    showCancelButton: true,
-                    cancelButtonText: 'Import Lagi',
-                    cancelButtonColor: '#6b7280',
-                    reverseButtons: true
-                }).then(function (res) {
-                    if (res.isConfirmed) {
-                        // Navigate to records tab
-                        $('[data-tab="records"]').trigger('click');
-                    }
-                    // Reset regardless
-                    resetImport();
-                });
-
-            }, 2800); // Simulate ~2.8s network delay
+            $.ajax({
+                url: '{{ route("attendance.import") }}',
+                method: 'POST',
+                data: JSON.stringify({ records: json }), 
+                contentType: 'application/json',
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                success: function(res) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Import Berhasil!',
+                        html: '<strong>' + json.length + ' baris</strong> berhasil diproses. Data yang valid telah disimpan.',
+                        confirmButtonColor: '#0ea66e',
+                        confirmButtonText: 'Lihat Data'
+                    }).then(function () {
+                        // Langsung reload saja agar data tabel Data Kehadiran ter-update dari backend
+                        window.location.reload(); 
+                    });
+                },
+                error: function(err) {
+                    var msg = err.responseJSON && err.responseJSON.message ? err.responseJSON.message : 'Terjadi kesalahan server.';
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'Import Gagal', 
+                        text: msg, 
+                        confirmButtonColor: '#f05252' 
+                    });
+                }
+            });
 
         });
     });
