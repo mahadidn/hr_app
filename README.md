@@ -1,64 +1,110 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Workforce & Attendance Management System
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A streamlined Employee Tracking and Attendance Management system built to handle workforce data with a focus on database performance and scalable architecture. This application allows HR departments to manage employee identities and track attendance records through seamless Excel imports and data visualization.
 
-## About Laravel
+## 🛠 Tech Stack
+- **Backend:** PHP 7.4 & Laravel 8
+- **Frontend:** Bootstrap 5, JQuery, SweetAlert2, SheetJS
+- **Database:** PostgreSQL 13
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🧬 Technical Implementation: UUID v6 Strategy
+During the development of this project, a strategic decision was made regarding data indexing and primary keys:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Why UUIDv6?** Given the environment constraints (**PHP 7.4** and **Laravel 8**), the `ramsey/uuid` library version used does not support UUIDv7. To ensure database performance remains high through lexicographical ordering (time-ordered), **UUIDv6** was implemented instead of the standard UUIDv4.
+- **Security & Privacy:** To mitigate the security risks inherent in standard UUIDv1/v6 (which can leak the server's MAC address), I implemented a **Random Node Provider**. This ensures that the node part of the UUID is cryptographically random while maintaining the time-ordered benefits.
+- **Performance over Database Defaults:** I opted against using PostgreSQL's native `gen_random_uuid()` because it generates UUIDv4. For large datasets, UUIDv4 can lead to index fragmentation and slower inserts compared to the time-sequential nature of UUIDv6.
+- **Implementation:** The generation logic is encapsulated within a custom `HasUuid` Trait, which is applied across all Eloquent models to automate primary key assignment.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🚀 Getting Started
 
-## Learning Laravel
+Follow these steps to set up the project locally:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 1. Prerequisites
+Ensure you have **PHP 7.4**, **Composer**, and **PostgreSQL 13** installed on your machine.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Installation
+1. Clone the repository:
+```bash
+git clone https://github.com/mahadidn/hr_app.git
+```
+```bash
+cd hr_app
+```
+2. Install dependencies:
+```bash
+composer install
+```
+3. Copy the environment file:
+```bash
+cp .env.example .env
+```
+4. Open .env and configure your PostgreSQL database credentials:
+```bash
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=your_db_name
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+5. Generate the application key and run migrations:
+```bash
+php artisan key:generate
+php artisan migrate
+```
+6. Seed the database with initial records and admin credentials:
+```bash
+php artisan db:seed --class=DatabaseSeeder
+```
+You can find the default admin credentials in your .env file under:
 
-## Laravel Sponsors
+`ADMIN_EMAIL`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+`ADMIN_PASSWORD`
 
-### Premium Partners
+7. Login via the web interface to begin managing attendance records.
+Running the App
+```bash
+php artisan serve
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## 🐳 Running with Docker (VS Code Devcontainers)
 
-## Contributing
+For a seamless, fully containerized development experience, this project includes a pre-configured **VS Code Devcontainer** setup. This eliminates the need to manually install PHP 7.4, PostgreSQL 13, or any local dependencies.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Prerequisites
+- [Docker](https://www.docker.com) installed and running.
+- [Visual Studio Code](https://code.visualstudio.com/).
+- The [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension for VS Code.
 
-## Code of Conduct
+### Steps to Run
+1. **Open the Project:** Open the cloned repository folder in VS Code.
+2. **Reopen in Container:** A prompt will appear in the bottom-right corner asking to **"Reopen in Container"**. Click it. 
+   *(Alternatively, press `Ctrl+Shift+P` / `Cmd+Shift+P`, type `Dev Containers`, and select **Reopen in Container**).*
+3. **Wait for the Build:** VS Code will build the `app` (PHP 7.4) and `postgres` (PostgreSQL 13) containers, and automatically install the recommended PHP and Laravel extensions.
+4. **Database Configuration:** The database is automatically provisioned via `docker-compose.yml`. The environment variables are already injected into the container:
+   - **DB_HOST:** `postgres`
+   - **DB_DATABASE:** `hr_db`
+   - **DB_USERNAME:** `hr_user`
+   - **DB_PASSWORD:** `secret`
+5. **Run Migrations & Serve:** Once inside the container, open the VS Code integrated terminal and run:
+   ```bash
+   composer install
+   php artisan migrate
+   php artisan db:seed --class=DatabaseSeeder
+   php artisan serve --host=0.0.0.0
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🚧 Known Limitations & Future Improvements
 
-## Security Vulnerabilities
+Due to the time constraints of this technical assessment, I focused on delivering a solid architectural foundation (such as the UUIDv6 database optimization and Docker containerization) and the core Minimum Viable Product (MVP) features like the Excel import and data visualization. 
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+As a result, some supplementary features shown in the UI were not fully implemented. Given more time, I would prioritize the following improvements:
 
-## License
+- **Complete CRUD Operations:** Fully implementing the remaining Create, Update, and Delete functionalities across all modules with comprehensive backend validation.
+- **Export Functionality:** Activating the "Import Excel" buttons to stored and preview the data.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+I apologize for any imperfections in the current iteration of the application. I treated this project as an opportunity to showcase my backend logic, problem-solving skills, and coding standards. I would be very excited to discuss these limitations and my planned solutions with the team during the technical interview.
+
+## Authors
+- [Mahadi Dwi Nugraha](https://www.github.com/mahadidn) | mahadidwinugraha@gmail.com
+
