@@ -52,7 +52,7 @@
                 <select class="emp-form-select" id="filterDept">
                     <option value="">All Departments</option>
                     @foreach ($departments as $index => $dept)
-                        <option value="{{$dept->name}}">{{$dept->Dept_name}}</option>
+                        <option value="{{$dept->Dept_name}}">{{$dept->Dept_name}}</option>
                     @endforeach
                 </select>
             </div>
@@ -131,6 +131,7 @@
                             data-nik="{{ $emp->NIK }}"
                             data-name="{{ $emp->Full_name }}"
                             data-dept="{{ $emp->Dept_id }}" {{-- Value department_id untuk select edit --}}
+                            data-dept-name="{{ $emp->department->Dept_name ?? 'N/A' }}"
                             data-desig="{{ $emp->Designation }}"
                             data-gender="{{ $emp->Gender }}"
                             data-phone="{{ $emp->Phone_no }}"
@@ -670,7 +671,8 @@ $(function () {
         // Select option
         $list.on('click', '.dept-option', function() {
             var val = $(this).data('value');
-            setSelected(val, val);
+            var d = departments.find(function(dept) { return dept.value == val; });
+            if (d) setSelected(d.value, d.label);  // ← label diambil dari array
         });
 
         // Close on outside click
@@ -766,6 +768,7 @@ $(function () {
         var name       = $row.data('name');
         var nik        = $row.data('nik');
         var dept       = $row.data('dept');
+        var deptName  = $row.data('dept-name');
         var desig      = $row.data('desig');
         var gender     = $row.data('gender');
         var phone      = $row.data('phone');
@@ -781,7 +784,8 @@ $(function () {
         $('#viewEmpAvatar').html(initials).attr('style', 'background:' + grad + ';');
         $('#viewEmpName').text(name);
         $('#viewEmpDesig').text(desig);
-        $('#viewEmpDept').text(dept);
+        // $('#viewEmpDept').text(dept);
+        $('#viewEmpDept').text(deptName);
         $('#viewDeptDot').css('background', deptColor);
         $('#viewNik').text(nik);
         $('#viewPhone').text(phone || '—');

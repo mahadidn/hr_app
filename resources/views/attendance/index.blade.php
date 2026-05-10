@@ -95,7 +95,7 @@
             <div class="att-card-header">
                 <div class="att-card-title">
                     <span class="title-icon"><i class="fa-solid fa-calendar-check"></i></span>
-                    Data Kehadiran &mdash;
+                    Attendance Data &mdash;
                     <span style="color:var(--text-muted);font-weight:500;font-size:13px;">
                         {{ \Carbon\Carbon::now()->translatedFormat('F Y') }}
                     </span>
@@ -118,7 +118,7 @@
                                 <input type="checkbox" id="checkAll" style="accent-color:var(--accent);width:15px;height:15px;">
                             </th>
                             <th class="sortable" data-col="name">
-                                Nama Karyawan <i class="fa-solid fa-sort sort-icon"></i>
+                                Employee Name <i class="fa-solid fa-sort sort-icon"></i>
                             </th>
                             <th class="sortable" data-col="nik">
                                 NIK <i class="fa-solid fa-sort sort-icon"></i>
@@ -168,7 +168,7 @@
                             <tr>
                                 <td colspan="5" style="text-align: center; padding: 40px; color: #888;">
                                     <i class="fa-solid fa-calendar-xmark" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
-                                    Tidak ada data kehadiran ditemukan.
+                                    No attendance data was found.
                                 </td>
                             </tr>
                         @endforelse
@@ -227,10 +227,10 @@
                                 <div class="dz-icon">
                                     <i class="fa-solid fa-cloud-arrow-up"></i>
                                 </div>
-                                <div class="dz-main-text">Drag &amp; Drop file di sini</div>
+                                <div class="dz-main-text">Drag &amp; Drop file here</div>
                                 <div class="dz-sub-text">
-                                    atau <strong>klik untuk memilih file</strong><br>
-                                    dari komputer Anda
+                                    or <strong>click to select a file </strong><br>
+                                    from your computer
                                 </div>
                                 <div class="dz-divider"></div>
                                 <div class="dz-types">
@@ -254,7 +254,7 @@
                                 <div class="dz-file-chosen" style="display:flex;">
                                     <div class="dz-chosen-name" id="chosenFileName"></div>
                                     <div class="dz-chosen-size" id="chosenFileSize"></div>
-                                    <span class="dz-change-link" id="dzChangeLink">Ganti file</span>
+                                    <span class="dz-change-link" id="dzChangeLink">Change file</span>
                                 </div>
                             </div>
                         </div>
@@ -289,69 +289,60 @@
             <div class="import-steps-panel">
                 <div class="steps-title">
                     <i class="fa-solid fa-circle-info" style="color:var(--accent-text);"></i>
-                    Panduan Import Data
+                    Data Import Guide
                 </div>
 
                 <div class="step-item">
                     <div class="step-num">1</div>
                     <div>
-                        <div class="step-text-main">Download Template</div>
-                        <div class="step-text-sub">Gunakan template resmi agar format kolom sesuai dan tidak terjadi error saat import.</div>
+                        <div class="step-text-main">Adjust the data columns</div>
+                        <div class="step-text-sub">Align the Excel columns using the Excel column mapping tutorial below.</div>
                     </div>
                 </div>
-
                 <div class="step-item">
                     <div class="step-num">2</div>
                     <div>
-                        <div class="step-text-main">Isi Data Kehadiran</div>
-                        <div class="step-text-sub">Lengkapi kolom sesuai panduan. Jangan mengubah nama kolom header atau menambah kolom baru.</div>
+                        <div class="step-text-main">Upload &amp; Preview</div>
+                        <div class="step-text-sub">Select a file, and the system will display a preview of the data before saving it to the database.</div>
                     </div>
                 </div>
 
                 <div class="step-item">
                     <div class="step-num">3</div>
                     <div>
-                        <div class="step-text-main">Upload &amp; Preview</div>
-                        <div class="step-text-sub">Pilih file dan sistem akan menampilkan preview data sebelum disimpan ke database.</div>
-                    </div>
-                </div>
-
-                <div class="step-item">
-                    <div class="step-num">4</div>
-                    <div>
-                        <div class="step-text-main">Submit ke Database</div>
-                        <div class="step-text-sub">Periksa data preview, lalu klik tombol "Submit to Database" untuk menyimpan.</div>
+                        <div class="step-text-main">Submit to Database</div>
+                        <div class="step-text-sub">Review the preview data, then click the “Submit to Database” button to save.</div>
                     </div>
                 </div>
 
                 {{-- Column mapping table --}}
                 <div style="margin-top:20px; border-top:1px solid var(--border-color); padding-top:16px; transition:border-color .3s;">
                     <div style="font-size:11.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;">
-                        Pemetaan Kolom Excel
+                        Excel Column Mapping Tutorial
                     </div>
                     <table class="col-map-table">
                         <thead>
                             <tr>
-                                <th>Nama Kolom</th>
-                                <th>Keterangan</th>
-                                <th>Wajib</th>
+                                <th>Column Name</th>
+                                <th>Description</th>
+                                <th>Required</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>employee_nik</td>
-                                <td style="font-family:var(--font-main);">NIK karyawan</td>
-                                <td><span class="req-pill">Wajib</span></td>
+                                <td style="font-family:var(--font-main);">Employee's NIK</td>
+                                <td><span class="req-pill">Required</span></td>
                             </tr>
                             <tr>
                                 <td>time_in</td>
                                 <td style="font-family:var(--font-main);">Format: YYYY-MM-DD HH:MM</td>
-                                <td><span class="req-pill">Wajib</span></td>
+                                <td><span class="req-pill">Required</span></td>
                             </tr>
                             <tr>
                                 <td>time_out</td>
                                 <td style="font-family:var(--font-main);">Format: YYYY-MM-DD HH:MM</td>
-                                <td><span class="opt-pill">Opsional</span></td>
+                                <td><span class="opt-pill">Optional</span></td>
                             </tr>
                         </tbody>
                     </table>
